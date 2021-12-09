@@ -54,6 +54,10 @@ public class User implements UserDetails {
         this.isActive = isActive;
     }
 
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -145,4 +149,51 @@ public class User implements UserDetails {
                 ", isActive=" + isActive +
                 '}';
     }
+
+    public static class UserBuilder {
+        private String id;
+        private String username;
+        private String password;
+        private String email;
+        private boolean isVerified;
+        private boolean isActive;
+
+        public UserBuilder withId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder withUsername(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public UserBuilder withPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder withEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public UserBuilder withIsVerified(boolean isVerified) {
+            this.isVerified = isVerified;
+            return this;
+        }
+
+        public UserBuilder withIsActive(boolean isActive) {
+            this.isActive = isActive;
+            return this;
+        }
+
+        public User build() {
+            return new User(id, username, password, email, isVerified, isActive);
+        }
+    }
+
+
 }
+
+
