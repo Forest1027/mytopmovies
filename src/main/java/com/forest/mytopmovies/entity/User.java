@@ -3,11 +3,14 @@ package com.forest.mytopmovies.entity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * User entity implements UserDetails to seamlessly integrates into Spring Security
@@ -16,23 +19,26 @@ import java.util.Collection;
 @Table(name = "mtm_users")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
     @Column(name = "id")
     private String id;
 
-    @Column(name = "username")
+    @Column(name = "username", length = 15, unique = true)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", length = 50)
     private String password;
 
-    @Column(name = "email")
+    @Column(name = "email", length = 50)
     private String email;
 
     @Column(name = "is_verified")
+    @ColumnDefault("false")
     private boolean isVerified;
 
     @Column(name = "is_active")
+    @ColumnDefault("true")
     private boolean isActive;
 
     public User() {

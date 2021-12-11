@@ -25,9 +25,12 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(
             new AntPathRequestMatcher("/public/**"),
-            new AntPathRequestMatcher("/swagger-ui/**"));
+            new AntPathRequestMatcher("/swagger-ui/**"),
+            new AntPathRequestMatcher("/swagger-resources/**"),
+            new AntPathRequestMatcher("/swagger-ui.html"),
+            new AntPathRequestMatcher("/v3/api-docs"));
 
-    private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(new AntPathRequestMatcher("/secured/**"));//new NegatedRequestMatcher(PUBLIC_URLS);
+    private static final RequestMatcher PROTECTED_URLS = new NegatedRequestMatcher(PUBLIC_URLS);
 
     @Autowired
     private TokenAuthenticationProvider provider;

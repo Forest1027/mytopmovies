@@ -1,9 +1,16 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
   datasource:
     url: "jdbc:postgresql://localhost:5432/MTM"
-    username: local
-    password:
+    username: ${db_username}
+    password: ${db_password}
+constants:
+  jwt:
+    issuer: Forest
+    expireSec: 1800
+    clockSkewSec: 120
+    secretKey: ${jwt_key}

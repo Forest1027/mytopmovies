@@ -24,7 +24,7 @@ public class PublicUsersController {
     public String register(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
-            @RequestParam("email") String email) {
+            @RequestParam(value = "email", required = false) String email) {
         userCrudService.save(
                 User.builder()
                         .withUsername(username)
