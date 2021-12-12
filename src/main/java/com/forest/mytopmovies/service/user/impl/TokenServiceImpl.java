@@ -35,13 +35,13 @@ public class TokenServiceImpl implements Clock, TokenService {
     public Map<String, String> untrusted(String token) {
         JwtParser parser = Jwts.parser().requireIssuer(constants.issuer).setClock(this).setAllowedClockSkewSeconds(constants.clockSkewSec);
         String withoutSignature = token.substring(0, token.lastIndexOf(DOT)) + DOT;
-        return parseClaims(() -> parser.parseClaimsJwt(withoutSignature).getBody());
+        return parseClaims(() -> parser.parseClaimsJws(withoutSignature).getBody());
     }
 
     @Override
     public Map<String, String> verify(String token) {
         JwtParser parser = Jwts.parser().requireIssuer(constants.issuer).setClock(this).setAllowedClockSkewSeconds(constants.clockSkewSec).setSigningKey(constants.secretKey);
-        return parseClaims(() -> parser.parseClaimsJwt(token).getBody());
+        return parseClaims(() -> parser.parseClaimsJws(token).getBody());
     }
 
     private String newToken(Map<String, String> attributes, int expireInSec) {

@@ -30,6 +30,7 @@ public class PublicUsersController {
                         .withUsername(username)
                         .withPassword(password)
                         .withEmail(email)
+                        .withIsActive(true)
                         .build()
         );
         return login(username, password);
