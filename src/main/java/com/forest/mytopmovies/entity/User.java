@@ -1,13 +1,12 @@
 package com.forest.mytopmovies.entity;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -42,14 +41,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    @JsonCreator
-    public User(@JsonProperty("id") String id,
-                @JsonProperty("username") String username,
-                @JsonProperty("password") String password,
-                @JsonProperty("email") String email,
-                @JsonProperty("isVerified") boolean isVerified,
-                @JsonProperty("isActive") boolean isActive) {
-        super();
+    public User(String id, String username, String password, String email, boolean isVerified, boolean isActive) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -65,16 +57,14 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return new ArrayList<>();
     }
 
-    @JsonIgnore
     @Override
     public String getPassword() {
         return this.password;
     }
 
-    @JsonIgnore
     @Override
     public String getUsername() {
         return this.username;

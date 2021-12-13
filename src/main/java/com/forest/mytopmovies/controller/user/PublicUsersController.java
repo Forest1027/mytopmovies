@@ -1,6 +1,7 @@
 package com.forest.mytopmovies.controller.user;
 
 import com.forest.mytopmovies.entity.User;
+import com.forest.mytopmovies.params.UserParam;
 import com.forest.mytopmovies.service.user.UserAuthService;
 import com.forest.mytopmovies.service.user.UserCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,31 +20,21 @@ public class PublicUsersController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/")
-    public String main() {
-        return "Hello Spring";
-    }
-
     @PostMapping("/register")
-    public String register(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password,
-            @RequestParam(value = "email", required = false) String email) {
+    public String register(@RequestBody UserParam user) {
         userCrudService.save(
                 User.builder()
-                        .withUsername(username)
-                        .withPassword(passwordEncoder.encode(password))
-                        .withEmail(email)
+                        .withUsername(user.getUsername())
+                        .withPassword(passwordEncoder.encode(user.getPassword()))
+                        .withEmail(user.getEmail())
                         .withIsActive(true)
                         .build()
         );
-        return login(username, password);
+        return login(user);
     }
 
     @PostMapping("/login")
-    public String login(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password) {
-        return authService.login(username, password).orElseThrow(() -> new RuntimeException("Invalid login and/or password"));
+    public String login(@RequestBody UserParam user) {
+        return authService.login(user.getUsername(), user.getPassword()).orElseThrow(() -> new RuntimeException("Invalid login and/or password"));
     }
 }
