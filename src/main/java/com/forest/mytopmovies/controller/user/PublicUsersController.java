@@ -4,6 +4,7 @@ import com.forest.mytopmovies.entity.User;
 import com.forest.mytopmovies.service.user.UserAuthService;
 import com.forest.mytopmovies.service.user.UserCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +15,9 @@ public class PublicUsersController {
 
     @Autowired
     private UserCrudService userCrudService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/")
     public String main() {
@@ -28,7 +32,7 @@ public class PublicUsersController {
         userCrudService.save(
                 User.builder()
                         .withUsername(username)
-                        .withPassword(password)
+                        .withPassword(passwordEncoder.encode(password))
                         .withEmail(email)
                         .withIsActive(true)
                         .build()
