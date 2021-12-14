@@ -1,0 +1,6 @@
+constants:
+  jwt:
+    issuer: Forest
+    expireSec: 1800
+    clockSkewSec: 120
+    secretKey: test-key
