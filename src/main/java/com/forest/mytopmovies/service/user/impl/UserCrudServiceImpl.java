@@ -28,4 +28,8 @@ public class UserCrudServiceImpl implements UserCrudService {
     public Optional<User> findByUsername(String username) {
         return userCrudRepository.findByUsername(username);
     }
+
+    public UserCrudServiceImpl(UserCrudRepository userCrudRepository) {
+        this.userCrudRepository = userCrudRepository;
+    }
 }

@@ -4,10 +4,11 @@ import com.forest.mytopmovies.entity.User;
 import com.forest.mytopmovies.service.user.TokenService;
 import com.forest.mytopmovies.service.user.UserAuthService;
 import com.forest.mytopmovies.service.user.UserCrudService;
-import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,7 +26,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     public Optional<String> login(String username, String password) {
         return userCrudService.findByUsername(username)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .map(user -> tokenService.expiring(ImmutableMap.of("username", username)));
+                .map(user -> tokenService.expiring(Map.of("username", username)));
     }
 
     @Override
@@ -38,5 +39,11 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Override
     public void logout(User user) {
 
+    }
+
+    public UserAuthServiceImpl(TokenService tokenService, UserCrudService userCrudService, PasswordEncoder passwordEncoder) {
+        this.tokenService = tokenService;
+        this.userCrudService = userCrudService;
+        this.passwordEncoder = passwordEncoder;
     }
 }

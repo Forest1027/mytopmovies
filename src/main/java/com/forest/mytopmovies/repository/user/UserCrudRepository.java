@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface UserCrudRepository extends JpaRepository<User, String> {
-    @Query("SELECT u from User u WHERE u.username = ?1")
+    @Query("SELECT u from User u WHERE u.username = ?1 and u.isActive = true")
     Optional<User> findByUsername(String username);
 }
