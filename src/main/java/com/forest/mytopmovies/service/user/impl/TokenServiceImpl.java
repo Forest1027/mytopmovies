@@ -2,13 +2,13 @@ package com.forest.mytopmovies.service.user.impl;
 
 import com.forest.mytopmovies.constants.JwtConstants;
 import com.forest.mytopmovies.service.user.TokenService;
-import com.google.common.collect.ImmutableMap;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.compression.GzipCompressionCodec;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -19,6 +19,9 @@ public class TokenServiceImpl implements Clock, TokenService {
 
     @Autowired
     private JwtConstants constants;
+
+    @Autowired
+    private java.time.Clock clock;
 
     @Override
     public String permanent(Map<String, String> attributes) {
@@ -32,40 +35,56 @@ public class TokenServiceImpl implements Clock, TokenService {
 
     @Override
     public Map<String, String> untrusted(String token) {
-        JwtParser parser = Jwts.parser().requireIssuer(constants.issuer).setClock(this).setAllowedClockSkewSeconds(constants.clockSkewSec);
+        JwtParser parser = Jwts.parser()
+                .requireIssuer(constants.issuer)
+                .setClock(this)
+                .setAllowedClockSkewSeconds(constants.clockSkewSec);
         String withoutSignature = token.substring(0, token.lastIndexOf(DOT)) + DOT;
-        return parseClaims(() -> parser.parseClaimsJws(withoutSignature).getBody());
+        return parseClaims(() -> parser.parseClaimsJwt(withoutSignature).getBody());
     }
 
     @Override
     public Map<String, String> verify(String token) {
-        JwtParser parser = Jwts.parser().requireIssuer(constants.issuer).setClock(this).setAllowedClockSkewSeconds(constants.clockSkewSec).setSigningKey(constants.secretKey);
+        JwtParser parser = Jwts.parser()
+                .requireIssuer(constants.issuer)
+                .setClock(this)
+                .setAllowedClockSkewSeconds(constants.clockSkewSec)
+                .setSigningKey(constants.secretKey);
         return parseClaims(() -> parser.parseClaimsJws(token).getBody());
     }
 
     private String newToken(Map<String, String> attributes, int expireInSec) {
-        DateTime now = new DateTime();
-        Claims claims = Jwts.claims().setIssuer(constants.issuer).setIssuedAt(now.toDate());
+        Date now = Date.from(clock.instant());
+        Claims claims = Jwts.claims()
+                .setIssuer(constants.issuer)
+                .setIssuedAt(now);
         if (expireInSec > 0) {
-            DateTime expireAt = now.plusSeconds(expireInSec);
-            claims.setExpiration(expireAt.toDate());
+            now.setTime(now.getTime() + (expireInSec * 1000));
+            claims.setExpiration(now);
         }
         claims.putAll(attributes);
-        return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, constants.secretKey)
+        return Jwts.builder()
+                .setClaims(claims)
+                .signWith(SignatureAlgorithm.HS256, constants.secretKey)
                 .compressWith(COMPRESSION_CODEC).compact();
     }
 
     private static Map<String, String> parseClaims(Supplier<Claims> toClaims) {
         Claims claims = toClaims.get();
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        Map<String, String> attributes = new HashMap<>();
         for (Map.Entry<String, Object> e : claims.entrySet()) {
-            builder.put(e.getKey(), String.valueOf(e.getValue()));
+            attributes.put(e.getKey(), String.valueOf(e.getValue()));
         }
-        return builder.build();
+        return Map.copyOf(attributes);
     }
 
     @Override
     public Date now() {
-        return new DateTime().toDate();
+        return Date.from(clock.instant());
+    }
+
+    public TokenServiceImpl(JwtConstants constants, java.time.Clock clock) {
+        this.constants = constants;
+        this.clock = clock;
     }
 }
