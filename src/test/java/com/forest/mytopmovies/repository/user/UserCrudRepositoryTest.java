@@ -16,24 +16,24 @@ class UserCrudRepositoryTest {
     @Test
     void canFindActiveUserByUsername() {
         setUpActiveUser();
-        Optional<User> user = underTest.findByUsername("forest");
+        Optional<User> user = underTest.findByUsername("forest1");
         assertThat(user).isPresent();
     }
 
     @Test
     void cannotFindInactiveUserByUsername() {
         setUpInactiveUser();
-        Optional<User> user = underTest.findByUsername("forest");
+        Optional<User> user = underTest.findByUsername("forest2");
         assertThat(user).isNotPresent();
     }
 
     private void setUpActiveUser() {
-        User user = User.builder().withId("test").withUsername("forest").withPassword("123").withIsActive(true).build();
+        User user = User.builder().withId("test").withUsername("forest1").withPassword("123").withIsActive(true).build();
         underTest.saveAndFlush(user);
     }
 
     private void setUpInactiveUser() {
-        User user = User.builder().withId("test").withUsername("forest").withPassword("123").withIsActive(false).build();
+        User user = User.builder().withId("test").withUsername("forest2").withPassword("123").withIsActive(false).build();
         underTest.saveAndFlush(user);
     }
 }
