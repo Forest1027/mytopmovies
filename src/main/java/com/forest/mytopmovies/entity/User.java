@@ -30,24 +30,24 @@ public class User implements UserDetails {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "is_verified")
+    @Column(name = "verified")
     @ColumnDefault("false")
-    private boolean isVerified;
+    private boolean verified;
 
-    @Column(name = "is_active")
+    @Column(name = "active")
     @ColumnDefault("true")
-    private boolean isActive;
+    private boolean active;
 
     public User() {
     }
 
-    public User(String id, String username, String password, String email, boolean isVerified, boolean isActive) {
+    public User(String id, String username, String password, String email, boolean verified, boolean active) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.isVerified = isVerified;
-        this.isActive = isActive;
+        this.verified = verified;
+        this.active = active;
     }
 
     public static UserBuilder builder() {
@@ -79,7 +79,7 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return this.isActive;
+        return this.active;
     }
 
     @JsonIgnore
@@ -91,7 +91,7 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isEnabled() {
-        return this.isActive;
+        return this.active;
     }
 
     public String getId() {
@@ -119,19 +119,19 @@ public class User implements UserDetails {
     }
 
     public boolean isVerified() {
-        return isVerified;
+        return verified;
     }
 
     public void setVerified(boolean verified) {
-        isVerified = verified;
+        this.verified = verified;
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        this.active = active;
     }
 
     @Override
@@ -139,8 +139,8 @@ public class User implements UserDetails {
         return "User{" +
                 "id='" + id + '\'' +
                 ", username='" + username + '\'' +
-                ", isVerified=" + isVerified +
-                ", isActive=" + isActive +
+                ", verified=" + verified +
+                ", active=" + active +
                 '}';
     }
 
@@ -149,8 +149,8 @@ public class User implements UserDetails {
         private String username;
         private String password;
         private String email;
-        private boolean isVerified;
-        private boolean isActive;
+        private boolean verified;
+        private boolean active;
 
         public UserBuilder withId(String id) {
             this.id = id;
@@ -172,18 +172,18 @@ public class User implements UserDetails {
             return this;
         }
 
-        public UserBuilder withIsVerified(boolean isVerified) {
-            this.isVerified = isVerified;
+        public UserBuilder withVerified(boolean verified) {
+            this.verified = verified;
             return this;
         }
 
-        public UserBuilder withIsActive(boolean isActive) {
-            this.isActive = isActive;
+        public UserBuilder withActive(boolean active) {
+            this.active = active;
             return this;
         }
 
         public User build() {
-            return new User(id, username, password, email, isVerified, isActive);
+            return new User(id, username, password, email, verified, active);
         }
     }
 

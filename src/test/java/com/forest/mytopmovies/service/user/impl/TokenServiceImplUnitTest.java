@@ -36,7 +36,7 @@ class TokenServiceImplUnitTest {
     void checkPermanent() {
         // given
         // when
-        String token = underTest.permanent(Map.of("username", "forest"));
+        String token = underTest.generatePermanentToken(Map.of("username", "forest"));
         // then
         assertThat(token).isEqualTo(permanentToken);
     }
@@ -45,14 +45,14 @@ class TokenServiceImplUnitTest {
     void checkExpiring() {
         // given
         // when
-        String token = underTest.expiring(Map.of("username", "forest"));
+        String token = underTest.generateExpiringToken(Map.of("username", "forest"));
         // then
         assertThat(token).isEqualTo(expireToken);
     }
 
     @Test
     void checkUntrusted() {
-        Map<String, String> result = underTest.untrusted(expireToken);
+        Map<String, String> result = underTest.verifyUntrusted(expireToken);
         assertThat(result).containsEntry("username", "forest").containsEntry("iss", "Forest");
         assertThat(Integer.valueOf(result.get("exp")) - Integer.valueOf(result.get("iat"))).isEqualTo(1800);
     }

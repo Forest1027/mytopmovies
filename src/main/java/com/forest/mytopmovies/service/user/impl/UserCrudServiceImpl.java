@@ -20,13 +20,13 @@ public class UserCrudServiceImpl implements UserCrudService {
     }
 
     @Override
-    public Optional<User> find(String id) {
+    public Optional<User> findOneById(String id) {
         return userCrudRepository.findById(id);
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return userCrudRepository.findByUsername(username);
+    public Optional<User> findOneByUsername(String username) {
+        return userCrudRepository.findOneByUsernameAndActiveIsTrue(username);
     }
 
     public UserCrudServiceImpl(UserCrudRepository userCrudRepository) {

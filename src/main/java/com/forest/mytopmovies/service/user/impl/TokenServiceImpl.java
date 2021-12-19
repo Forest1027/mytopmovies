@@ -24,17 +24,17 @@ public class TokenServiceImpl implements Clock, TokenService {
     private java.time.Clock clock;
 
     @Override
-    public String permanent(Map<String, String> attributes) {
+    public String generatePermanentToken(Map<String, String> attributes) {
         return newToken(attributes, 0);
     }
 
     @Override
-    public String expiring(Map<String, String> attributes) {
+    public String generateExpiringToken(Map<String, String> attributes) {
         return newToken(attributes, constants.expireSec);
     }
 
     @Override
-    public Map<String, String> untrusted(String token) {
+    public Map<String, String> verifyUntrusted(String token) {
         JwtParser parser = Jwts.parser()
                 .requireIssuer(constants.issuer)
                 .setClock(this)

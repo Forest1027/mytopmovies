@@ -24,21 +24,16 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public Optional<String> login(String username, String password) {
-        return userCrudService.findByUsername(username)
+        return userCrudService.findOneByUsername(username)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .map(user -> tokenService.expiring(Map.of("username", username)));
+                .map(user -> tokenService.generateExpiringToken(Map.of("username", username)));
     }
 
     @Override
     public Optional<User> findByToken(String token) {
         return Optional.of(tokenService.verify(token))
                 .map(map -> map.get("username"))
-                .flatMap(userCrudService::findByUsername);
-    }
-
-    @Override
-    public void logout(User user) {
-
+                .flatMap(userCrudService::findOneByUsername);
     }
 
     public UserAuthServiceImpl(TokenService tokenService, UserCrudService userCrudService, PasswordEncoder passwordEncoder) {

@@ -3,11 +3,11 @@ package com.forest.mytopmovies.service.user;
 import java.util.Map;
 
 public interface TokenService {
-    String permanent(Map<String, String> attributes);
+    String generatePermanentToken(Map<String, String> attributes);
 
-    String expiring(Map<String, String> attributes);
+    String generateExpiringToken(Map<String, String> attributes);
 
-    Map<String, String> untrusted(String token);
+    Map<String, String> verifyUntrusted(String token);
 
     Map<String, String> verify(String token);
 }

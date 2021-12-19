@@ -24,10 +24,10 @@ public class PublicUsersController {
     public String register(@RequestBody UserParam user) {
         userCrudService.save(
                 User.builder()
-                        .withUsername(user.getUsername())
-                        .withPassword(passwordEncoder.encode(user.getPassword()))
-                        .withEmail(user.getEmail())
-                        .withIsActive(true)
+                        .withUsername(user.username())
+                        .withPassword(passwordEncoder.encode(user.password()))
+                        .withEmail(user.email())
+                        .withActive(true)
                         .build()
         );
         return login(user);
@@ -35,6 +35,6 @@ public class PublicUsersController {
 
     @PostMapping("/login")
     public String login(@RequestBody UserParam user) {
-        return authService.login(user.getUsername(), user.getPassword()).orElseThrow(() -> new RuntimeException("Invalid login and/or password"));
+        return authService.login(user.username(), user.password()).orElseThrow(() -> new RuntimeException("Invalid login and/or password"));
     }
 }

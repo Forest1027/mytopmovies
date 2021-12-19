@@ -37,7 +37,7 @@ class UserCrudServiceImplUnitTest {
         // given
         String id = "test";
         // when
-        underTest.find(id);
+        underTest.findOneById(id);
         // then
         verify(userCrudRepository).findById(id);
     }
@@ -47,8 +47,8 @@ class UserCrudServiceImplUnitTest {
         // given
         String username = "forest";
         // when
-        underTest.findByUsername(username);
+        underTest.findOneByUsername(username);
         // then
-        verify(userCrudRepository).findByUsername(username);
+        verify(userCrudRepository).findOneByUsernameAndActiveIsTrue(username);
     }
 }

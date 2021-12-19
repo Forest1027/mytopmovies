@@ -37,7 +37,7 @@ class UserAuthServiceImplUnitTest {
         // when
         underTest.login(username, password);
         // then
-        verify(userCrudService).findByUsername(username);
+        verify(userCrudService).findOneByUsername(username);
     }
 
     @Test
@@ -50,7 +50,4 @@ class UserAuthServiceImplUnitTest {
         verify(tokenService).verify(token);
     }
 
-    @Test
-    void logout() {
-    }
 }
