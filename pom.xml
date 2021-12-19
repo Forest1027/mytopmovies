@@ -101,7 +101,7 @@
 						<configuration>
 							<skipTests>false</skipTests>
 							<includes>
-								<include>**/*Test.java</include>
+								<include>**/*UnitTest.java</include>
 							</includes>
 						</configuration>
 					</execution>

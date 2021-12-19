@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class UserAuthServiceImplTest {
+class UserAuthServiceImplUnitTest {
     private UserAuthService underTest;
 
     @Mock

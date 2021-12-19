@@ -76,7 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     SimpleUrlAuthenticationSuccessHandler successHandler() {
         SimpleUrlAuthenticationSuccessHandler successHandler = new SimpleUrlAuthenticationSuccessHandler();
-        successHandler.setRedirectStrategy(new NoRedirectStrategy());
+//        successHandler.setRedirectStrategy(new NoRedirectStrategy());
         return successHandler;
     }
 

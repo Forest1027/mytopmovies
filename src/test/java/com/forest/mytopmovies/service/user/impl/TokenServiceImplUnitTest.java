@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class TokenServiceImplTest {
+class TokenServiceImplUnitTest {
 
     private TokenService underTest;
 

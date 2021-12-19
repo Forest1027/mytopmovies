@@ -10,9 +10,15 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .components(new Components()
-                        .addSecuritySchemes("Authorization-Token",
-                                new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+        return new OpenAPI().components(components());
+    }
+
+    private Components components() {
+        return new Components()
+                .addSecuritySchemes("Authorization-Token", securityScheme());
+    }
+
+    private SecurityScheme securityScheme() {
+        return new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT");
     }
 }
