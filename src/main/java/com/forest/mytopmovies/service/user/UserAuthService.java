@@ -8,5 +8,4 @@ public interface UserAuthService {
 
     Optional<User> findByToken(String token);
 
-    void logout(User user);
 }
