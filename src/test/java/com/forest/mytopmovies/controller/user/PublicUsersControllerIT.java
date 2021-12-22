@@ -21,10 +21,14 @@ class PublicUsersControllerIT extends IntegrationTest {
 
     @Test
     void canRegister() throws Exception {
+        // given
         User user = defaultUser();
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(user);
 
+        // when
+
+        // then
         this.mockMvc.perform(post("/public/users/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))

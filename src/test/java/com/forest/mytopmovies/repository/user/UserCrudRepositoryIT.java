@@ -15,15 +15,21 @@ class UserCrudRepositoryIT extends IntegrationTest {
 
     @Test
     void canFindActiveUserByUsername() {
+        // given
         setUpActiveUser();
+        // when
         Optional<User> user = underTest.findOneByUsernameAndActiveIsTrue("forest1");
+        // then
         assertThat(user).isPresent();
     }
 
     @Test
     void cannotFindInactiveUserByUsername() {
+        // given
         setUpInactiveUser();
+        // when
         Optional<User> user = underTest.findOneByUsernameAndActiveIsTrue("forest2");
+        // then
         assertThat(user).isNotPresent();
     }
 

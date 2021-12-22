@@ -35,6 +35,7 @@ class TokenServiceImplUnitTest extends UnitTest {
     @Test
     void checkPermanent() {
         // given
+
         // when
         String token = underTest.generatePermanentToken(Map.of("username", "forest"));
         // then
@@ -44,6 +45,7 @@ class TokenServiceImplUnitTest extends UnitTest {
     @Test
     void checkExpiring() {
         // given
+
         // when
         String token = underTest.generateExpiringToken(Map.of("username", "forest"));
         // then
@@ -52,14 +54,22 @@ class TokenServiceImplUnitTest extends UnitTest {
 
     @Test
     void checkUntrusted() {
+        // given
+
+        // when
         Map<String, String> result = underTest.verifyUntrusted(expireToken);
+        // then
         assertThat(result).containsEntry("username", "forest").containsEntry("iss", "Forest");
         assertThat(Integer.valueOf(result.get("exp")) - Integer.valueOf(result.get("iat"))).isEqualTo(1800);
     }
 
     @Test
     void checkVerify() {
+        // given
+
+        // when
         Map<String, String> result = underTest.verify(expireToken);
+        // then
         assertThat(result).containsEntry("username", "forest").containsEntry("iss", "Forest");
         assertThat(Integer.valueOf(result.get("exp")) - Integer.valueOf(result.get("iat"))).isEqualTo(1800);
     }

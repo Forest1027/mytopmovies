@@ -26,11 +26,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String param = Optional.ofNullable(request.getHeader(AUTHORIZATION)).orElse(request.getParameter("token"));
-        String token = Optional.ofNullable(param)
-                .map(val -> val.replaceFirst(BEARER, ""))
-                .map(String::trim)
-                .orElseThrow(() -> new BadCredentialsException("Missing authentication token"));
+        String token = extractToken(request);
         Authentication auth = new UsernamePasswordAuthenticationToken(token, token);
         return getAuthenticationManager().authenticate(auth);
     }
@@ -39,5 +35,13 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         super.successfulAuthentication(request, response, chain, authResult);
         chain.doFilter(request, response);
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String param = Optional.ofNullable(request.getHeader(AUTHORIZATION)).orElseThrow(() -> new BadCredentialsException("Missing authentication token"));
+        return Optional.ofNullable(param)
+                .map(val -> val.replaceFirst(BEARER, ""))
+                .map(String::trim)
+                .orElseThrow(() -> new BadCredentialsException("Missing authentication token"));
     }
 }
