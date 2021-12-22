@@ -3,6 +3,7 @@ package com.forest.mytopmovies.service.user.impl;
 import com.forest.mytopmovies.config.ClockConfiguration;
 import com.forest.mytopmovies.constants.JwtConstants;
 import com.forest.mytopmovies.service.user.TokenService;
+import com.forest.utils.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +13,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
-class TokenServiceImplUnitTest {
+class TokenServiceImplUnitTest extends UnitTest {
 
     private TokenService underTest;
 

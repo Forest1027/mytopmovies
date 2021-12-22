@@ -3,6 +3,7 @@ package com.forest.mytopmovies.service.user.impl;
 import com.forest.mytopmovies.entity.User;
 import com.forest.mytopmovies.repository.user.UserCrudRepository;
 import com.forest.mytopmovies.service.user.UserCrudService;
+import com.forest.utils.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,8 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
-class UserCrudServiceImplUnitTest {
+class UserCrudServiceImplUnitTest extends UnitTest {
     private UserCrudService underTest;
 
     @Mock

@@ -35,21 +35,14 @@ public class TokenServiceImpl implements Clock, TokenService {
 
     @Override
     public Map<String, String> verifyUntrusted(String token) {
-        JwtParser parser = Jwts.parser()
-                .requireIssuer(constants.issuer)
-                .setClock(this)
-                .setAllowedClockSkewSeconds(constants.clockSkewSec);
+        JwtParser parser = jwtParser();
         String withoutSignature = token.substring(0, token.lastIndexOf(DOT)) + DOT;
         return parseClaims(() -> parser.parseClaimsJwt(withoutSignature).getBody());
     }
 
     @Override
     public Map<String, String> verify(String token) {
-        JwtParser parser = Jwts.parser()
-                .requireIssuer(constants.issuer)
-                .setClock(this)
-                .setAllowedClockSkewSeconds(constants.clockSkewSec)
-                .setSigningKey(constants.secretKey);
+        JwtParser parser = jwtParser().setSigningKey(constants.secretKey);
         return parseClaims(() -> parser.parseClaimsJws(token).getBody());
     }
 
@@ -69,12 +62,10 @@ public class TokenServiceImpl implements Clock, TokenService {
                 .compressWith(COMPRESSION_CODEC).compact();
     }
 
-    private static Map<String, String> parseClaims(Supplier<Claims> toClaims) {
+    private Map<String, String> parseClaims(Supplier<Claims> toClaims) {
         Claims claims = toClaims.get();
         Map<String, String> attributes = new HashMap<>();
-        for (Map.Entry<String, Object> e : claims.entrySet()) {
-            attributes.put(e.getKey(), String.valueOf(e.getValue()));
-        }
+        claims.forEach((key, val) -> attributes.put(key, String.valueOf(val)));
         return Map.copyOf(attributes);
     }
 
@@ -86,5 +77,12 @@ public class TokenServiceImpl implements Clock, TokenService {
     public TokenServiceImpl(JwtConstants constants, java.time.Clock clock) {
         this.constants = constants;
         this.clock = clock;
+    }
+
+    private JwtParser jwtParser() {
+        return Jwts.parser()
+                .requireIssuer(constants.issuer)
+                .setClock(this)
+                .setAllowedClockSkewSeconds(constants.clockSkewSec);
     }
 }
