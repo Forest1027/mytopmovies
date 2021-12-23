@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.config.security;
+package com.forest.mytopmovies.token;
 
 import com.forest.mytopmovies.service.user.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticati
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         Object token = authentication.getCredentials();
         return Optional
-                .ofNullable(token)
+                .ofNullable(authentication.getCredentials())
                 .map(String::valueOf)
                 .flatMap(userAuthService::findByToken)
                 .orElseThrow(() -> new UsernameNotFoundException("Cannot find user with token = " + token));

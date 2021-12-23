@@ -1,27 +1,30 @@
 package com.forest.mytopmovies.controller.user;
 
 import com.forest.mytopmovies.entity.User;
-import com.forest.mytopmovies.params.UserParam;
+import com.forest.mytopmovies.params.UserCreateParam;
+import com.forest.mytopmovies.params.UserLoginParam;
 import com.forest.mytopmovies.service.user.UserAuthService;
 import com.forest.mytopmovies.service.user.UserCrudService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/public/users")
 public class PublicUsersController {
-    @Autowired
-    private UserAuthService authService;
+    private final UserAuthService authService;
 
-    @Autowired
-    private UserCrudService userCrudService;
+    private final UserCrudService userCrudService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public PublicUsersController(UserAuthService authService, UserCrudService userCrudService, PasswordEncoder passwordEncoder) {
+        this.authService = authService;
+        this.userCrudService = userCrudService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostMapping("/register")
-    public String register(@RequestBody UserParam user) {
+    public String register(@RequestBody UserCreateParam user) {
         userCrudService.save(
                 User.builder()
                         .withUsername(user.username())
@@ -30,11 +33,11 @@ public class PublicUsersController {
                         .withActive(true)
                         .build()
         );
-        return login(user);
+        return login(new UserLoginParam(user.username(), user.password()));
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UserParam user) {
+    public String login(@RequestBody UserLoginParam user) {
         return authService.login(user.username(), user.password()).orElseThrow(() -> new RuntimeException("Invalid login and/or password"));
     }
 }

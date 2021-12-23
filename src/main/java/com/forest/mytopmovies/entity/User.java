@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * User entity implements UserDetails to seamlessly integrates into Spring Security
@@ -37,18 +38,6 @@ public class User implements UserDetails {
     @Column(name = "active")
     @ColumnDefault("true")
     private boolean active;
-
-    public User() {
-    }
-
-    public User(String id, String username, String password, String email, boolean verified, boolean active) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.verified = verified;
-        this.active = active;
-    }
 
     public static UserBuilder builder() {
         return new UserBuilder();
@@ -144,6 +133,19 @@ public class User implements UserDetails {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public static class UserBuilder {
         private String id;
         private String username;
@@ -183,7 +185,14 @@ public class User implements UserDetails {
         }
 
         public User build() {
-            return new User(id, username, password, email, verified, active);
+            User user = new User();
+            user.setId(id);
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setEmail(email);
+            user.setVerified(verified);
+            user.setActive(active);
+            return user;
         }
     }
 

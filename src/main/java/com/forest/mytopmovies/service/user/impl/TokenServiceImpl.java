@@ -4,7 +4,6 @@ import com.forest.mytopmovies.constants.JwtConstants;
 import com.forest.mytopmovies.service.user.TokenService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.compression.GzipCompressionCodec;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -17,11 +16,14 @@ public class TokenServiceImpl implements Clock, TokenService {
     private static final String DOT = ".";
     private static final GzipCompressionCodec COMPRESSION_CODEC = new GzipCompressionCodec();
 
-    @Autowired
-    private JwtConstants constants;
+    private final JwtConstants constants;
 
-    @Autowired
-    private java.time.Clock clock;
+    private final java.time.Clock clock;
+
+    public TokenServiceImpl(JwtConstants constants, java.time.Clock clock) {
+        this.constants = constants;
+        this.clock = clock;
+    }
 
     @Override
     public String generatePermanentToken(Map<String, String> attributes) {
@@ -47,6 +49,15 @@ public class TokenServiceImpl implements Clock, TokenService {
     }
 
     private String newToken(Map<String, String> attributes, int expireInSec) {
+        Claims claims = getClaims(expireInSec);
+        claims.putAll(attributes);
+        return Jwts.builder()
+                .setClaims(claims)
+                .signWith(SignatureAlgorithm.HS256, constants.secretKey)
+                .compressWith(COMPRESSION_CODEC).compact();
+    }
+
+    private Claims getClaims(int expireInSec) {
         Date now = Date.from(clock.instant());
         Claims claims = Jwts.claims()
                 .setIssuer(constants.issuer)
@@ -55,11 +66,7 @@ public class TokenServiceImpl implements Clock, TokenService {
             now.setTime(now.getTime() + (expireInSec * 1000));
             claims.setExpiration(now);
         }
-        claims.putAll(attributes);
-        return Jwts.builder()
-                .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS256, constants.secretKey)
-                .compressWith(COMPRESSION_CODEC).compact();
+        return claims;
     }
 
     private Map<String, String> parseClaims(Supplier<Claims> toClaims) {
@@ -72,11 +79,6 @@ public class TokenServiceImpl implements Clock, TokenService {
     @Override
     public Date now() {
         return Date.from(clock.instant());
-    }
-
-    public TokenServiceImpl(JwtConstants constants, java.time.Clock clock) {
-        this.constants = constants;
-        this.clock = clock;
     }
 
     private JwtParser jwtParser() {

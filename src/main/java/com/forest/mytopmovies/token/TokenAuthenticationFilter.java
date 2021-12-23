@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.config.security;
+package com.forest.mytopmovies.token;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,8 +40,8 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
     private String extractToken(HttpServletRequest request) {
         String param = Optional.ofNullable(request.getHeader(AUTHORIZATION)).orElseThrow(() -> new BadCredentialsException("Missing authentication token"));
         return Optional.ofNullable(param)
-                .map(val -> val.replaceFirst(BEARER, ""))
-                .map(String::trim)
+                .filter(val -> val.startsWith(BEARER))
+                .map(val -> val.substring(7))
                 .orElseThrow(() -> new BadCredentialsException("Missing authentication token"));
     }
 }

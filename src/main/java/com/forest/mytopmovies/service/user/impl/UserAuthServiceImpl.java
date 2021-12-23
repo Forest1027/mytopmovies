@@ -4,7 +4,6 @@ import com.forest.mytopmovies.entity.User;
 import com.forest.mytopmovies.service.user.TokenService;
 import com.forest.mytopmovies.service.user.UserAuthService;
 import com.forest.mytopmovies.service.user.UserCrudService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +12,17 @@ import java.util.Optional;
 
 @Service
 public class UserAuthServiceImpl implements UserAuthService {
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
 
-    @Autowired
-    private UserCrudService userCrudService;
+    private final UserCrudService userCrudService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserAuthServiceImpl(TokenService tokenService, UserCrudService userCrudService, PasswordEncoder passwordEncoder) {
+        this.tokenService = tokenService;
+        this.userCrudService = userCrudService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public Optional<String> login(String username, String password) {
@@ -36,9 +38,4 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .flatMap(userCrudService::findOneByUsername);
     }
 
-    public UserAuthServiceImpl(TokenService tokenService, UserCrudService userCrudService, PasswordEncoder passwordEncoder) {
-        this.tokenService = tokenService;
-        this.userCrudService = userCrudService;
-        this.passwordEncoder = passwordEncoder;
-    }
 }
