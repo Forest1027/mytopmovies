@@ -1,6 +1,7 @@
 package com.forest.mytopmovies.service.user.impl;
 
 import com.forest.mytopmovies.entity.User;
+import com.forest.mytopmovies.exceptions.UserExistsException;
 import com.forest.mytopmovies.repository.user.UserCrudRepository;
 import com.forest.mytopmovies.service.user.UserCrudService;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ public class UserCrudServiceImpl implements UserCrudService {
 
     @Override
     public User save(User user) {
+        if (findOneByUsername(user.getUsername()).isPresent())
+            throw new UserExistsException(user.getUsername());
         return userCrudRepository.save(user);
     }
 

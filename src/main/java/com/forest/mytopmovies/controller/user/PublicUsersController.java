@@ -5,6 +5,8 @@ import com.forest.mytopmovies.params.UserCreateParam;
 import com.forest.mytopmovies.params.UserLoginParam;
 import com.forest.mytopmovies.service.user.UserAuthService;
 import com.forest.mytopmovies.service.user.UserCrudService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +26,7 @@ public class PublicUsersController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody UserCreateParam user) {
+    public ResponseEntity<String> register(@RequestBody UserCreateParam user) {
         userCrudService.save(
                 User.builder()
                         .withUsername(user.username())
@@ -37,7 +39,7 @@ public class PublicUsersController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UserLoginParam user) {
-        return authService.login(user.username(), user.password()).orElseThrow(() -> new RuntimeException("Invalid login and/or password"));
+    public ResponseEntity<String> login(@RequestBody UserLoginParam user) {
+        return new ResponseEntity<>(authService.login(user.username(), user.password()).orElseThrow(() -> new RuntimeException("Invalid login and/or password")), HttpStatus.OK);
     }
 }
