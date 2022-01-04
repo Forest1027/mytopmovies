@@ -14,3 +14,12 @@ constants:
     expireSec: 1800
     clockSkewSec: 120
     secretKey: ${jwt_key}
+logging:
+  level:
+    root: INFO
+    com.forest.mytopmovies: DEBUG
+  file:
+    name: log/MTM.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: log/MTM-%d{dd-MM-yyyy}.%i.log

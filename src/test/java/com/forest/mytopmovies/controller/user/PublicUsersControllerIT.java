@@ -6,7 +6,6 @@ import com.forest.utils.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,19 +33,6 @@ class PublicUsersControllerIT extends IntegrationTest {
                 .content(json))
                 .andDo(print())
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    void canLogin() throws Exception {
-        /*User user = defaultUser();
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(user);
-        this.mockMvc.perform(post("/public/users/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andDo(print())
-                .andExpect(status().isUnauthorized());*/
-
     }
 
     private static User defaultUser() {
