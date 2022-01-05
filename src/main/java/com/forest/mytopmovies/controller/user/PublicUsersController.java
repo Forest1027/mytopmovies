@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/public/users")
 public class PublicUsersController {
@@ -26,7 +28,7 @@ public class PublicUsersController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserCreateParam user) {
+    public ResponseEntity<String> register(@Valid @RequestBody UserCreateParam user) {
         userCrudService.save(
                 User.builder()
                         .withUsername(user.username())
