@@ -1,1 +1,25 @@
-
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/MTM"
+    username: ${db_username}
+    password: ${db_password}
+constants:
+  jwt:
+    issuer: Forest
+    expireSec: 1800
+    clockSkewSec: 120
+    secretKey: ${jwt_key}
+logging:
+  level:
+    root: INFO
+    com.forest.mytopmovies: DEBUG
+  file:
+    name: log/MTM.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: log/MTM-%d{dd-MM-yyyy}.%i.log
