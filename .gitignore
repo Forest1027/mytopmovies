@@ -36,3 +36,5 @@ build/
 /mvnw.cmd
 /src/main/resources/secrets.txt
 /log/
+/db.mv.db
+/db.trace.db
