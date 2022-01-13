@@ -26,6 +26,10 @@ constants:
     expireSec: 1800
     clockSkewSec: 120
     secretKey: ${jwt_key}
+  tmdb:
+    baseUrl: https://api.themoviedb.org/3
+    tmdbKey: ${tmdb_key}
+    searchMovieAPI: /search/movie
 logging:
   level:
     root: INFO
