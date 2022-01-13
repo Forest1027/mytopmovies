@@ -1,8 +1,8 @@
 package com.forest.mytopmovies.controller.user;
 
 import com.forest.mytopmovies.entity.User;
-import com.forest.mytopmovies.params.UserCreateParam;
-import com.forest.mytopmovies.params.UserLoginParam;
+import com.forest.mytopmovies.params.user.UserCreateParam;
+import com.forest.mytopmovies.params.user.UserLoginParam;
 import com.forest.mytopmovies.service.user.UserAuthService;
 import com.forest.mytopmovies.service.user.UserCrudService;
 import org.springframework.http.HttpStatus;
@@ -41,7 +41,7 @@ public class PublicUsersController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginParam user) {
+    public ResponseEntity<String> login(@Valid @RequestBody UserLoginParam user) {
         return new ResponseEntity<>(authService.login(user.username(), user.password()).orElseThrow(() -> new RuntimeException("Invalid login and/or password")), HttpStatus.OK);
     }
 }

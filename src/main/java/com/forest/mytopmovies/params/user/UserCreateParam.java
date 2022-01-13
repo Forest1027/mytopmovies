@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.params;
+package com.forest.mytopmovies.params.user;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
