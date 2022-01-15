@@ -34,6 +34,5 @@ build/
 /HELP.md
 /mvnw
 /mvnw.cmd
-/.mvn/
 /src/main/resources/secrets.txt
 /log/
