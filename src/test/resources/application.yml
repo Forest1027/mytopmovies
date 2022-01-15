@@ -4,3 +4,7 @@ constants:
     expireSec: 1800
     clockSkewSec: 120
     secretKey: test-key
+  tmdb:
+    baseUrl: https://api.themoviedb.org/3
+    tmdbKey: ${tmdb_key}
+    searchMovieAPI: /search/movie

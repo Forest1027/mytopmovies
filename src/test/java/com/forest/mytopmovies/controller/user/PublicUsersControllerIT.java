@@ -37,7 +37,7 @@ class PublicUsersControllerIT extends IntegrationTest {
 
     private static User defaultUser() {
         return User.builder()
-                .withUsername("forest")
-                .withPassword("123456").build();
+                .username("forest")
+                .password("123456").build();
     }
 }

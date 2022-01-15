@@ -1,6 +1,8 @@
 package com.forest.mytopmovies.entity;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -9,6 +11,8 @@ import java.util.List;
 @Entity
 @Table(name = "mtm_movies")
 @Builder
+@Getter
+@Setter
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,83 +57,4 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "movielist_id ", referencedColumnName = "id"))
     private List<MovieList> movieLists;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getOriginalLanguage() {
-        return originalLanguage;
-    }
-
-    public void setOriginalLanguage(String originalLanguage) {
-        this.originalLanguage = originalLanguage;
-    }
-
-    public String getOverview() {
-        return overview;
-    }
-
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
-
-    public double getAverageVote() {
-        return averageVote;
-    }
-
-    public void setAverageVote(double averageVote) {
-        this.averageVote = averageVote;
-    }
-
-    public Date getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(Date releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public List<Genres> getGenres() {
-        return genres;
-    }
-
-    public void setGenres(List<Genres> genres) {
-        this.genres = genres;
-    }
-
-    public int getTmdbId() {
-        return tmdbId;
-    }
-
-    public void setTmdbId(int tmdbId) {
-        this.tmdbId = tmdbId;
-    }
-
-    public List<MovieList> getMovieLists() {
-        return movieLists;
-    }
-
-    public void setMovieLists(List<MovieList> movieLists) {
-        this.movieLists = movieLists;
-    }
 }

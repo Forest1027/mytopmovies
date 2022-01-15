@@ -1,5 +1,8 @@
 package com.forest.mytopmovies.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +19,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "mtm_movie_lists")
+@Getter
+@Setter
 public class MovieList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,43 +45,4 @@ public class MovieList {
             inverseJoinColumns = @JoinColumn(name = "movie_id ", referencedColumnName = "id"))
     private List<Movie> movies;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getMovieListName() {
-        return movieListName;
-    }
-
-    public void setMovieListName(String movieListName) {
-        this.movieListName = movieListName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<Movie> getMovies() {
-        return movies;
-    }
-
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
-    }
 }

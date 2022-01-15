@@ -6,9 +6,8 @@ import com.forest.mytopmovies.service.user.UserCrudService;
 import com.forest.utils.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.mockito.Mockito.verify;
 
 class UserCrudServiceImplUnitTest extends UnitTest {
@@ -25,7 +24,7 @@ class UserCrudServiceImplUnitTest extends UnitTest {
     @Test
     void canSave() {
         // given
-        User user = User.builder().withUsername("forest").withPassword("123").build();
+        User user = User.builder().username("forest").password("123").build();
         // when
         underTest.save(user);
         // then

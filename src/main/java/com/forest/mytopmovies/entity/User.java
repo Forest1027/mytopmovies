@@ -1,5 +1,9 @@
 package com.forest.mytopmovies.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +23,10 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "mtm_users")
+@Getter
+@Setter
+@ToString
+@Builder
 public class User implements UserDetails {
     @Id
     @GeneratedValue(generator = "uuid")
@@ -82,56 +90,6 @@ public class User implements UserDetails {
         return this.active;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(boolean verified) {
-        this.verified = verified;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id='" + id + '\'' +
-                ", username='" + username + '\'' +
-                ", verified=" + verified +
-                ", active=" + active +
-                '}';
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -144,57 +102,6 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(id);
     }
-
-    public static class UserBuilder {
-        private String id;
-        private String username;
-        private String password;
-        private String email;
-        private boolean verified;
-        private boolean active;
-
-        public UserBuilder withId(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public UserBuilder withUsername(String username) {
-            this.username = username;
-            return this;
-        }
-
-        public UserBuilder withPassword(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public UserBuilder withEmail(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public UserBuilder withVerified(boolean verified) {
-            this.verified = verified;
-            return this;
-        }
-
-        public UserBuilder withActive(boolean active) {
-            this.active = active;
-            return this;
-        }
-
-        public User build() {
-            User user = new User();
-            user.setId(id);
-            user.setUsername(username);
-            user.setPassword(password);
-            user.setEmail(email);
-            user.setVerified(verified);
-            user.setActive(active);
-            return user;
-        }
-    }
-
 
 }
 

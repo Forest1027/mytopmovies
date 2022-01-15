@@ -1,5 +1,8 @@
 package com.forest.mytopmovies.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +14,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "mtm_movie_reviews")
+@Getter
+@Setter
 public class MovieReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,43 +34,4 @@ public class MovieReview {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getMovieId() {
-        return movieId;
-    }
-
-    public void setMovieId(int movieId) {
-        this.movieId = movieId;
-    }
-
-    public int getVote() {
-        return vote;
-    }
-
-    public void setVote(int vote) {
-        this.vote = vote;
-    }
-
-    public String getReview() {
-        return review;
-    }
-
-    public void setReview(String review) {
-        this.review = review;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

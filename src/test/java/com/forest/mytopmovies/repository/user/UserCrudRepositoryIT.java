@@ -4,8 +4,9 @@ import com.forest.mytopmovies.entity.User;
 import com.forest.utils.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+
 import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserCrudRepositoryIT extends IntegrationTest {
@@ -34,12 +35,12 @@ class UserCrudRepositoryIT extends IntegrationTest {
     }
 
     private void setUpActiveUser() {
-        User user = User.builder().withId("test").withUsername("forest1").withPassword("123").withActive(true).build();
+        User user = User.builder().id("test").username("forest1").password("123").active(true).build();
         underTest.saveAndFlush(user);
     }
 
     private void setUpInactiveUser() {
-        User user = User.builder().withId("test").withUsername("forest2").withPassword("123").withActive(false).build();
+        User user = User.builder().id("test").username("forest2").password("123").active(false).build();
         underTest.saveAndFlush(user);
     }
 }
