@@ -5,6 +5,6 @@ constants:
     clockSkewSec: 120
     secretKey: test-key
   tmdb:
-    baseUrl: https://api.themoviedb.org/3
-    tmdbKey: ${tmdb_key}
+    baseUrl: http://localhost:9999
+    tmdbKey: test-key
     searchMovieAPI: /search/movie

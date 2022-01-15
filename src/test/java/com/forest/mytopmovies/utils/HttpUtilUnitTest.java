@@ -1,25 +1,45 @@
 package com.forest.mytopmovies.utils;
 
 import com.forest.utils.UnitTest;
+import com.xebialabs.restito.server.StubServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.net.http.HttpResponse;
-
+import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
+import static com.xebialabs.restito.semantics.Action.ok;
+import static com.xebialabs.restito.semantics.Action.stringContent;
+import static com.xebialabs.restito.semantics.Condition.get;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class HttpUtilUnitTest extends UnitTest {
 
-    @Test
-    void testGETRequestSuccess() throws Exception {
-        String uri = "https://api.themoviedb.org/3/search/movie?api_key=3016d4342a491fa8cf0f37cb8bf5413c&query=Dont%27%20look%20up";
-        HttpResponse<String> response = HttpUtil.get(uri);
-        assertThat(response.statusCode()).isEqualTo(200);
+    private StubServer server;
+
+    @BeforeEach
+    public void start() {
+        server = new StubServer(9999);
+        server.start();
+    }
+
+    @AfterEach
+    public void stop() {
+        server.stop();
     }
 
     @Test
-    void testGETRequestFail() throws Exception {
-        String uri = "https://api.themoviedb.org/3/search/movie?query=Dont%27%20look%20up";
-        HttpResponse<String> response = HttpUtil.get(uri);
-        assertThat(response.statusCode()).isNotEqualTo(200);
+    void testGETRequestSuccess() throws Exception {
+        // given
+        String expectedResponse = "Succeed";
+        whenHttp(server)
+                .match(get("/search/movie"))
+                .then(ok(), stringContent(expectedResponse));
+
+        // when
+        String response = HttpUtil.get("http://localhost:9999", "/search/movie");
+
+        // then
+        assertThat(response).isEqualTo(expectedResponse);
     }
+
 }

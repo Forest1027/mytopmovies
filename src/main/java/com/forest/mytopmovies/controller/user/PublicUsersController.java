@@ -31,10 +31,10 @@ public class PublicUsersController {
     public ResponseEntity<String> register(@Valid @RequestBody UserCreateParam user) {
         userCrudService.save(
                 User.builder()
-                        .withUsername(user.username())
-                        .withPassword(passwordEncoder.encode(user.password()))
-                        .withEmail(user.email())
-                        .withActive(true)
+                        .username(user.username())
+                        .password(passwordEncoder.encode(user.password()))
+                        .email(user.email())
+                        .active(true)
                         .build()
         );
         return login(new UserLoginParam(user.username(), user.password()));

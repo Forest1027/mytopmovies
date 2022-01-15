@@ -32,8 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 /HELP.md
-/mvnw
-/mvnw.cmd
 /src/main/resources/secrets.txt
 /log/
 /db.mv.db
