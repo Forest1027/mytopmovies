@@ -25,8 +25,10 @@ class UserCrudServiceImplUnitTest extends UnitTest {
     void canSave() {
         // given
         User user = User.builder().username("forest").password("123").build();
+
         // when
         underTest.save(user);
+
         // then
         verify(userCrudRepository).save(user);
     }
@@ -35,8 +37,10 @@ class UserCrudServiceImplUnitTest extends UnitTest {
     void canFind() {
         // given
         String id = "test";
+
         // when
         underTest.findOneById(id);
+
         // then
         verify(userCrudRepository).findById(id);
     }
@@ -45,8 +49,10 @@ class UserCrudServiceImplUnitTest extends UnitTest {
     void canFindByUsername() {
         // given
         String username = "forest";
+
         // when
         underTest.findOneByUsername(username);
+
         // then
         verify(userCrudRepository).findOneByUsernameAndActiveIsTrue(username);
     }

@@ -1,16 +1,18 @@
 package com.forest.mytopmovies.utils;
 
+import com.forest.mytopmovies.exceptions.TMDBHttpRequestException;
 import com.forest.utils.UnitTest;
 import com.xebialabs.restito.server.StubServer;
+import org.glassfish.grizzly.http.util.HttpStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
-import static com.xebialabs.restito.semantics.Action.ok;
-import static com.xebialabs.restito.semantics.Action.stringContent;
+import static com.xebialabs.restito.semantics.Action.*;
 import static com.xebialabs.restito.semantics.Condition.get;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertThrows;
 
 class HttpUtilUnitTest extends UnitTest {
 
@@ -40,6 +42,23 @@ class HttpUtilUnitTest extends UnitTest {
 
         // then
         assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void testGETRequestFail() {
+        // given
+        whenHttp(server)
+                .match("/search/movie")
+                .then(status(HttpStatus.BAD_REQUEST_400));
+
+        // when
+        TMDBHttpRequestException exception = assertThrows(TMDBHttpRequestException.class, () -> {
+            HttpUtil.get("http://localhost:9999", "/search/movie");
+        });
+
+
+        // then
+        assertThat(exception.getMessage()).contains("Bad Request");
     }
 
 }

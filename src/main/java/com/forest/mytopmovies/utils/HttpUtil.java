@@ -1,6 +1,5 @@
 package com.forest.mytopmovies.utils;
 
-import com.forest.mytopmovies.aop.LoggingHandler;
 import com.forest.mytopmovies.exceptions.TMDBHttpRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +15,12 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 
 public class HttpUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtil.class);
 
     private HttpUtil() {
     }
 
-    public static String get(String baseUrl, String uri) throws Exception {
+    public static String get(String baseUrl, String uri) throws TMDBHttpRequestException {
         WebClient client = buildWebClient(baseUrl);
         WebClient.RequestBodySpec bodySpec = buildBodySpec(client, uri);
         return bodySpec.exchangeToMono(clientResponse -> {

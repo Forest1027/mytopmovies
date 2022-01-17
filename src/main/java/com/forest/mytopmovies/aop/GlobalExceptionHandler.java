@@ -1,5 +1,6 @@
 package com.forest.mytopmovies.aop;
 
+import com.forest.mytopmovies.exceptions.TMDBHttpRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -27,6 +28,14 @@ public class GlobalExceptionHandler {
         String message = fieldErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toSet()).stream().collect(Collectors.joining(System.lineSeparator()));
         LOGGER.error(message);
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TMDBHttpRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ResponseEntity<String> validationExceptionHandler(TMDBHttpRequestException ex) {
+        LOGGER.error(ex.getMessage());
+        return new ResponseEntity<>("Failure when execute request to TMDB API", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

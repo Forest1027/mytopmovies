@@ -2,6 +2,8 @@ package com.forest.mytopmovies.utils;
 
 import com.forest.mytopmovies.pojos.Movie;
 
+import java.util.List;
+
 public class MoviePojoEntityConverter {
 
     private MoviePojoEntityConverter() {
@@ -17,5 +19,11 @@ public class MoviePojoEntityConverter {
                 .averageVote(moviePojo.getVote_average())
                 .releaseDate(moviePojo.getRelease_date())
                 .build();
+    }
+
+    public static List<com.forest.mytopmovies.entity.Movie> transferMoviePojoListToEntityList(List<Movie> movies) {
+        return movies.stream()
+                .map(MoviePojoEntityConverter::convertMoviePojoToEntity)
+                .toList();
     }
 }
