@@ -43,7 +43,7 @@ public class Movie {
             name = "mtm_movie_genre",
             joinColumns = @JoinColumn(name = "movie_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id ", referencedColumnName = "id"))
-    private List<Genres> genres;
+    private List<Genre> genres;
 
     @Column(name = "tmdb_id")
     private int tmdbId;

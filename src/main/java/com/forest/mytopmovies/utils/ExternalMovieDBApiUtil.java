@@ -14,10 +14,12 @@ import java.util.List;
 
 @Component
 public class ExternalMovieDBApiUtil {
+    private final MoviePojoEntityConverter moviePojoEntityConverter;
 
     private final TMDBConstants tmdbConstants;
 
-    public ExternalMovieDBApiUtil(TMDBConstants tmdbConstants) {
+    public ExternalMovieDBApiUtil(MoviePojoEntityConverter moviePojoEntityConverter, TMDBConstants tmdbConstants) {
+        this.moviePojoEntityConverter = moviePojoEntityConverter;
         this.tmdbConstants = tmdbConstants;
     }
 
@@ -26,7 +28,7 @@ public class ExternalMovieDBApiUtil {
         String response =  HttpUtil.get(tmdbConstants.baseUrl, uri);
         ObjectMapper objectMapper = new ObjectMapper();
         Page<Movie> queryResult = objectMapper.readValue(response, new TypeReference<>() {});
-        List<com.forest.mytopmovies.entity.Movie> convertedMovies = MoviePojoEntityConverter.transferMoviePojoListToEntityList(queryResult.getResults());
+        List<com.forest.mytopmovies.entity.Movie> convertedMovies = moviePojoEntityConverter.transferMoviePojoListToEntityList(queryResult.getResults());
 
         return Page.<com.forest.mytopmovies.entity.Movie>builder().page(queryResult.getPage())
                 .total_results(queryResult.getTotal_results())

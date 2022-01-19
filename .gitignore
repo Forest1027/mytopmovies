@@ -36,3 +36,4 @@ build/
 /log/
 /db.mv.db
 /db.trace.db
+/fetchGenres.js

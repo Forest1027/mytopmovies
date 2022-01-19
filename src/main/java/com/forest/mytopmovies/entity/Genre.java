@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Table(name = "mtm_genres")
 @Getter
 @Setter
-public class Genres {
+public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
