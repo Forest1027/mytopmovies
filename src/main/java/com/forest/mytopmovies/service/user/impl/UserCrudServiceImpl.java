@@ -32,7 +32,7 @@ public class UserCrudServiceImpl implements UserCrudService {
 
     @Override
     public Optional<User> findOneByUsername(String username) {
-        return userCrudRepository.findOneByUsernameAndActiveIsTrue(username);
+        return userCrudRepository.findOneByUsernameAndActive(username, true);
     }
 
 }

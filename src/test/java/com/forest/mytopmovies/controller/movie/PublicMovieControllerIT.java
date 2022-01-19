@@ -69,7 +69,7 @@ class PublicMovieControllerIT extends IntegrationTest {
     void canThrowTMDBExceptionWhenFailure() throws Exception {
         // given
         String movieName = "Don't look up";
-        String expectedReponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/tmdb/json_response/search.json");
+        String expectedReponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/search.json");
         String uri = "/search/movie";
         whenHttp(server)
                 .match(Condition.endsWithUri(uri), Condition.parameter("api_key", "test-wrong-key"))

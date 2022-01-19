@@ -17,6 +17,6 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public Optional<Genre> findGenreByTMDBId(int id) {
-        return repository.findOneByTMDBId(id);
+        return repository.findOneByTmdbId(id);
     }
 }

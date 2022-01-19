@@ -54,6 +54,6 @@ class UserCrudServiceImplUnitTest extends UnitTest {
         underTest.findOneByUsername(username);
 
         // then
-        verify(userCrudRepository).findOneByUsernameAndActiveIsTrue(username);
+        verify(userCrudRepository).findOneByUsernameAndActive(username, true);
     }
 }

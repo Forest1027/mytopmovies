@@ -19,7 +19,7 @@ class UserCrudRepositoryIT extends IntegrationTest {
         // given
         setUpActiveUser();
         // when
-        Optional<User> user = underTest.findOneByUsernameAndActiveIsTrue("forest1");
+        Optional<User> user = underTest.findOneByUsernameAndActive("forest1", true);
         // then
         assertThat(user).isPresent();
     }
@@ -29,7 +29,7 @@ class UserCrudRepositoryIT extends IntegrationTest {
         // given
         setUpInactiveUser();
         // when
-        Optional<User> user = underTest.findOneByUsernameAndActiveIsTrue("forest2");
+        Optional<User> user = underTest.findOneByUsernameAndActive("forest2", true);
         // then
         assertThat(user).isNotPresent();
     }
