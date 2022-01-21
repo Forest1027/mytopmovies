@@ -4,9 +4,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "mtm_movies")
@@ -48,13 +60,7 @@ public class Movie {
     @Column(name = "tmdb_id")
     private int tmdbId;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE
-                    , CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "mtm_movie_movie_list",
-            joinColumns = @JoinColumn(name = "movie_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "movielist_id ", referencedColumnName = "id"))
-    private List<MovieList> movieLists;
+    @OneToMany(mappedBy = "movie")
+    private Set<MovieMovieList> movieLists;
 
 }

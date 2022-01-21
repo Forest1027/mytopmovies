@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1642579100999-1
+      id: 1642709866366-1
       author: forest (generated)
       changes:
         - createTable:
@@ -15,13 +15,13 @@ databaseChangeLog:
                   type: INT
               - column:
                   name: GENRE_NAME
-                  type: VARCHAR(20)
+                  type: VARCHAR(255)
               - column:
                   name: TMDB_ID
                   type: INT
             tableName: MTM_GENRES
   - changeSet:
-      id: 1642579100999-2
+      id: 1642709866366-2
       author: forest (generated)
       changes:
         - createTable:
@@ -57,7 +57,7 @@ databaseChangeLog:
                   type: INT
             tableName: MTM_MOVIES
   - changeSet:
-      id: 1642579100999-3
+      id: 1642709866366-3
       author: forest (generated)
       changes:
         - createTable:
@@ -74,7 +74,7 @@ databaseChangeLog:
                   type: INT
             tableName: MTM_MOVIE_GENRE
   - changeSet:
-      id: 1642579100999-4
+      id: 1642709866366-4
       author: forest (generated)
       changes:
         - createTable:
@@ -98,29 +98,28 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: MTM_MOVIE_LISTS
   - changeSet:
-      id: 1642579100999-5
+      id: 1642709866366-5
       author: forest (generated)
       changes:
         - createTable:
             columns:
               - column:
+                  autoIncrement: true
                   constraints:
                     nullable: false
-                  name: MOVIE_LIST_ID
+                    primaryKey: true
+                    primaryKeyName: CONSTRAINT_B
+                  name: ID
                   type: INT
               - column:
-                  constraints:
-                    nullable: false
                   name: MOVIE_ID
                   type: INT
               - column:
-                  constraints:
-                    nullable: false
-                  name: MOVIELIST_ID
+                  name: MOVIE_LIST_ID
                   type: INT
             tableName: MTM_MOVIE_MOVIE_LIST
   - changeSet:
-      id: 1642579100999-6
+      id: 1642709866366-6
       author: forest (generated)
       changes:
         - createTable:
@@ -147,7 +146,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: MTM_MOVIE_REVIEWS
   - changeSet:
-      id: 1642579100999-7
+      id: 1642709866366-7
       author: forest (generated)
       changes:
         - createTable:
@@ -178,7 +177,7 @@ databaseChangeLog:
                   type: BOOLEAN
             tableName: MTM_USERS
   - changeSet:
-      id: 1642579100999-8
+      id: 1642709866366-8
       author: forest (generated)
       changes:
         - addUniqueConstraint:
@@ -186,7 +185,7 @@ databaseChangeLog:
             constraintName: UK_JNJAXDIMXKGJN2OBQFS4R3UXF
             tableName: MTM_USERS
   - changeSet:
-      id: 1642579100999-9
+      id: 1642709866366-9
       author: forest (generated)
       changes:
         - createIndex:
@@ -196,7 +195,7 @@ databaseChangeLog:
             indexName: FK21W059LTV9YJCKYI392OPDKFR_INDEX_3
             tableName: MTM_MOVIE_GENRE
   - changeSet:
-      id: 1642579100999-10
+      id: 1642709866366-10
       author: forest (generated)
       changes:
         - createIndex:
@@ -206,7 +205,7 @@ databaseChangeLog:
             indexName: FKAC8QOIXWQ4FR0TYD292D9EMR1_INDEX_3
             tableName: MTM_MOVIE_GENRE
   - changeSet:
-      id: 1642579100999-11
+      id: 1642709866366-11
       author: forest (generated)
       changes:
         - createIndex:
@@ -216,17 +215,7 @@ databaseChangeLog:
             indexName: FKAIVNJRLF4UY2AFHDK14RG9BRP_INDEX_B
             tableName: MTM_MOVIE_MOVIE_LIST
   - changeSet:
-      id: 1642579100999-12
-      author: forest (generated)
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: MOVIELIST_ID
-            indexName: FKHTAX3BY5NAJYGSMA9X3PA1RH2_INDEX_B
-            tableName: MTM_MOVIE_MOVIE_LIST
-  - changeSet:
-      id: 1642579100999-13
+      id: 1642709866366-12
       author: forest (generated)
       changes:
         - createIndex:
@@ -236,7 +225,7 @@ databaseChangeLog:
             indexName: FKMC6WJE9WKKAATUKH4JQNIHO8Y_INDEX_3
             tableName: MTM_MOVIE_LISTS
   - changeSet:
-      id: 1642579100999-14
+      id: 1642709866366-13
       author: forest (generated)
       changes:
         - createIndex:
@@ -246,7 +235,7 @@ databaseChangeLog:
             indexName: FKOONNG6IL4JRQE7TM6X331JNTF_INDEX_B
             tableName: MTM_MOVIE_MOVIE_LIST
   - changeSet:
-      id: 1642579100999-15
+      id: 1642709866366-14
       author: forest (generated)
       changes:
         - createIndex:
@@ -256,7 +245,7 @@ databaseChangeLog:
             indexName: FKR05DTBIYDQLJYP4EW1GLRIHYA_INDEX_D
             tableName: MTM_MOVIE_REVIEWS
   - changeSet:
-      id: 1642579100999-16
+      id: 1642709866366-15
       author: forest (generated)
       changes:
         - addForeignKeyConstraint:
@@ -271,7 +260,7 @@ databaseChangeLog:
             referencedTableName: MTM_GENRES
             validate: true
   - changeSet:
-      id: 1642579100999-17
+      id: 1642709866366-16
       author: forest (generated)
       changes:
         - addForeignKeyConstraint:
@@ -286,7 +275,7 @@ databaseChangeLog:
             referencedTableName: MTM_MOVIES
             validate: true
   - changeSet:
-      id: 1642579100999-18
+      id: 1642709866366-17
       author: forest (generated)
       changes:
         - addForeignKeyConstraint:
@@ -301,22 +290,7 @@ databaseChangeLog:
             referencedTableName: MTM_MOVIES
             validate: true
   - changeSet:
-      id: 1642579100999-19
-      author: forest (generated)
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: MOVIELIST_ID
-            baseTableName: MTM_MOVIE_MOVIE_LIST
-            constraintName: FKHTAX3BY5NAJYGSMA9X3PA1RH2
-            deferrable: false
-            initiallyDeferred: false
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
-            referencedColumnNames: ID
-            referencedTableName: MTM_MOVIE_LISTS
-            validate: true
-  - changeSet:
-      id: 1642579100999-20
+      id: 1642709866366-18
       author: forest (generated)
       changes:
         - addForeignKeyConstraint:
@@ -331,7 +305,7 @@ databaseChangeLog:
             referencedTableName: MTM_USERS
             validate: true
   - changeSet:
-      id: 1642579100999-21
+      id: 1642709866366-19
       author: forest (generated)
       changes:
         - addForeignKeyConstraint:
@@ -346,7 +320,7 @@ databaseChangeLog:
             referencedTableName: MTM_MOVIE_LISTS
             validate: true
   - changeSet:
-      id: 1642579100999-22
+      id: 1642709866366-20
       author: forest (generated)
       changes:
         - addForeignKeyConstraint:

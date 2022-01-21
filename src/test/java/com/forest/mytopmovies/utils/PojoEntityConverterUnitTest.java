@@ -3,7 +3,6 @@ package com.forest.mytopmovies.utils;
 import com.forest.mytopmovies.pojos.Movie;
 import com.forest.mytopmovies.service.movie.GenreService;
 import com.forest.utils.UnitTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -11,17 +10,11 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MoviePojoEntityConverterUnitTest extends UnitTest {
+class PojoEntityConverterUnitTest extends UnitTest {
 
-    private MoviePojoEntityConverter underTest;
 
     @Mock
     private GenreService genreService;
-
-    @BeforeEach
-    void setup() {
-        underTest = new MoviePojoEntityConverter(genreService);
-    }
 
     @Test
     void canConvertMoviePojoToEntity() {
@@ -44,7 +37,7 @@ class MoviePojoEntityConverterUnitTest extends UnitTest {
                 .build();
 
         // when
-        com.forest.mytopmovies.entity.Movie result = underTest.convertMoviePojoToEntity(moviePojo);
+        com.forest.mytopmovies.entity.Movie result = PojoEntityParamConverter.convertMoviePojoToEntity(moviePojo, genreService);
 
         // then
         assertThat(result.getId()).isEqualTo(id);

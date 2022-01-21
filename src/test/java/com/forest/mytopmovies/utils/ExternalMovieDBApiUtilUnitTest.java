@@ -27,18 +27,15 @@ class ExternalMovieDBApiUtilUnitTest extends UnitTest {
 
     private TMDBConstants tmdbConstants;
 
-    private MoviePojoEntityConverter moviePojoEntityConverter;
-
     @Mock
     private GenreService genreService;
 
     @BeforeEach
     void setUp() {
-        moviePojoEntityConverter = new MoviePojoEntityConverter(genreService);
         tmdbConstants = new TMDBConstants();
         tmdbConstants.baseUrl = "http://localhost:9999";
         tmdbConstants.searchMovieAPI = "/search/movie";
-        underTest = new ExternalMovieDBApiUtil(moviePojoEntityConverter, tmdbConstants);
+        underTest = new ExternalMovieDBApiUtil(tmdbConstants, genreService);
     }
 
     @Test
