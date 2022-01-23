@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Movie {
+public class MoviePojo {
     private String poster_path;
 
     private Boolean adult;

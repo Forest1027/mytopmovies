@@ -36,6 +36,7 @@ logging:
   level:
     root: INFO
     com.forest.mytopmovies: DEBUG
+    org.hibernate.type: TRACE
   file:
     name: log/MTM.log
   logback:

@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.utils;
 
-import com.forest.mytopmovies.pojos.Movie;
+import com.forest.mytopmovies.pojos.MoviePojo;
 import com.forest.mytopmovies.service.movie.GenreService;
 import com.forest.utils.UnitTest;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class PojoEntityConverterUnitTest extends UnitTest {
         double avgVote = 7.3;
         Date releaseDate = new Date();
 
-        Movie moviePojo = Movie.builder().id(id)
+        MoviePojo moviePojo = MoviePojo.builder().id(id)
                 .original_title(originalTitle)
                 .title(title)
                 .original_language(originalLanguage)

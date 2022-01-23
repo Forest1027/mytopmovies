@@ -1,9 +1,18 @@
 package com.forest.mytopmovies.service.user.impl;
 
 import com.forest.mytopmovies.constants.JwtConstants;
+import com.forest.mytopmovies.exceptions.TokenExpiredException;
 import com.forest.mytopmovies.service.user.TokenService;
-import io.jsonwebtoken.*;
+import com.forest.mytopmovies.utils.LambdaExceptionWrappers;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Clock;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.compression.GzipCompressionCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,6 +24,7 @@ import java.util.function.Supplier;
 public class TokenServiceImpl implements Clock, TokenService {
     private static final String DOT = ".";
     private static final GzipCompressionCodec COMPRESSION_CODEC = new GzipCompressionCodec();
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenServiceImpl.class);
 
     private final JwtConstants constants;
 
@@ -43,9 +53,9 @@ public class TokenServiceImpl implements Clock, TokenService {
     }
 
     @Override
-    public Map<String, String> verify(String token) {
+    public Map<String, String> verify(String token) throws TokenExpiredException {
         JwtParser parser = jwtParser().setSigningKey(constants.secretKey);
-        return parseClaims(() -> parser.parseClaimsJws(token).getBody());
+        return parseClaims(LambdaExceptionWrappers.supplierWrapper(() -> parser.parseClaimsJws(token).getBody(), ExpiredJwtException.class));
     }
 
     private String newToken(Map<String, String> attributes, int expireInSec) {
@@ -71,6 +81,10 @@ public class TokenServiceImpl implements Clock, TokenService {
 
     private Map<String, String> parseClaims(Supplier<Claims> toClaims) {
         Claims claims = toClaims.get();
+        if (claims == null) {
+            LOGGER.error("JWT token has expired");
+            return new HashMap<>();
+        }
         Map<String, String> attributes = new HashMap<>();
         claims.forEach((key, val) -> attributes.put(key, String.valueOf(val)));
         return Map.copyOf(attributes);
