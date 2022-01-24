@@ -32,6 +32,7 @@ constants:
     baseUrl: https://api.themoviedb.org/3
     tmdbKey: ${tmdb_key}
     searchMovieAPI: /search/movie
+    searchMovieByIdAPI: /movie
 logging:
   level:
     root: INFO

@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PojoEntityParamConverter {
+
     private PojoEntityParamConverter() {
     }
 
@@ -41,6 +42,7 @@ public class PojoEntityParamConverter {
                 .overview(moviePojo.getOverview())
                 .averageVote(moviePojo.getVote_average())
                 .releaseDate(moviePojo.getRelease_date())
+                .tmdbId(moviePojo.getId())
                 .genres(getGenreList(moviePojo.getGenre_ids(), genreService))
                 .build();
     }
@@ -51,12 +53,12 @@ public class PojoEntityParamConverter {
                 .toList();
     }
 
-    public static MovieListPojo convertMovieListEntityToPojo(MovieList movieList) {
+    public static MovieListPojo convertMovieListEntityToPojo(MovieList movieList, List<Movie> movies) {
         return MovieListPojo.builder()
                 .id(movieList.getId())
                 .movieListName(movieList.getMovieListName())
                 .description(movieList.getDescription())
-                .movies(movieList.getMovies()).build();
+                .movies(movies).build();
     }
 
     private static List<Genre> getGenreList(List<Integer> genreIds, GenreService genreService) {

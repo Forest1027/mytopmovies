@@ -1,11 +1,12 @@
 package com.forest.mytopmovies.controller.movie;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.forest.mytopmovies.entity.MovieList;
 import com.forest.mytopmovies.entity.User;
 import com.forest.mytopmovies.params.movie.MovieListParam;
 import com.forest.mytopmovies.params.movie.MovieListUpdateParam;
 import com.forest.mytopmovies.pojos.MovieListPojo;
-import com.forest.mytopmovies.pojos.Page;
+import com.forest.mytopmovies.pojos.PagePojo;
 import com.forest.mytopmovies.service.movie.MovieListService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,7 +33,7 @@ public class ProtectedMovieListController {
 
     @PostMapping
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<MovieList> createMovieList(@RequestBody MovieListParam movieListParam, Authentication authentication) {
+    public ResponseEntity<MovieListPojo> createMovieList(@RequestBody MovieListParam movieListParam, Authentication authentication) throws JsonProcessingException {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(movieListService.createMovieList(movieListParam, user), HttpStatus.OK);
     }
@@ -53,7 +54,7 @@ public class ProtectedMovieListController {
 
     @GetMapping
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<Page<MovieListPojo>> getMovieList(@RequestParam(required = false) String name, @RequestParam(required = false) Integer page, Authentication authentication) {
+    public ResponseEntity<PagePojo<MovieListPojo>> getMovieList(@RequestParam(required = false) String name, @RequestParam(required = false) Integer page, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(movieListService.getMovieLists(name, page, user), HttpStatus.OK);
     }

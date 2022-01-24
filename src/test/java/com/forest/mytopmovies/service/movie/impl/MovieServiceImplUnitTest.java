@@ -1,7 +1,7 @@
 package com.forest.mytopmovies.service.movie.impl;
 
 import com.forest.mytopmovies.entity.Movie;
-import com.forest.mytopmovies.pojos.Page;
+import com.forest.mytopmovies.pojos.PagePojo;
 import com.forest.mytopmovies.service.movie.MovieService;
 import com.forest.mytopmovies.utils.ExternalMovieDBApiUtil;
 import com.forest.utils.UnitTest;
@@ -29,12 +29,12 @@ class MovieServiceImplUnitTest extends UnitTest {
         // given
         String movieName = "Chicago";
         int page = 1;
-        var expectedResult = Page.<Movie>builder().build();
+        var expectedResult = PagePojo.<Movie>builder().build();
 
         when(externalMovieDBApiUtil.searchMovies(movieName, page)).thenReturn(expectedResult);
 
         // when
-        Page<Movie> result = underTest.searchTMDBMovieByName(movieName, page);
+        PagePojo<Movie> result = underTest.searchTMDBMovieByName(movieName, page);
 
         // then
         verify(externalMovieDBApiUtil).searchMovies(movieName, page);

@@ -11,3 +11,6 @@ constants:
 spring:
   liquibase:
     change-log: classpath:db/liquibase-changelog.yml
+  jpa:
+    hibernate:
+      show-sql: true

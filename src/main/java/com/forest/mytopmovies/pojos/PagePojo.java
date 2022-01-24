@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Page<T> {
+public class PagePojo<T> {
 
     private Integer page;
 

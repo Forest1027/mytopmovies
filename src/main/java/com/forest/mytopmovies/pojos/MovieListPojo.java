@@ -1,13 +1,13 @@
 package com.forest.mytopmovies.pojos;
 
-import com.forest.mytopmovies.entity.MovieMovieList;
+import com.forest.mytopmovies.entity.Movie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,6 +21,6 @@ public class MovieListPojo {
 
     private String description;
 
-    private Set<MovieMovieList> movies;
+    private List<Movie> movies;
 
 }

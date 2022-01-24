@@ -1,31 +1,53 @@
 package com.forest.mytopmovies.service.movie.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.forest.mytopmovies.entity.Movie;
 import com.forest.mytopmovies.entity.MovieList;
+import com.forest.mytopmovies.entity.MovieMovieList;
 import com.forest.mytopmovies.entity.User;
 import com.forest.mytopmovies.params.movie.MovieListParam;
 import com.forest.mytopmovies.params.movie.MovieListUpdateParam;
 import com.forest.mytopmovies.pojos.MovieListPojo;
-import com.forest.mytopmovies.pojos.Page;
+import com.forest.mytopmovies.pojos.PagePojo;
 import com.forest.mytopmovies.repository.movie.MovieListRepository;
+import com.forest.mytopmovies.repository.movie.MovieMovieListRepository;
 import com.forest.mytopmovies.service.movie.MovieListService;
+import com.forest.mytopmovies.utils.ExternalMovieDBApiUtil;
 import com.forest.mytopmovies.utils.PojoEntityParamConverter;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @AllArgsConstructor
 public class MovieListServiceImpl implements MovieListService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovieListServiceImpl.class);
+
     private final MovieListRepository movieListRepository;
 
+    private final MovieMovieListRepository movieMovieListRepository;
+
+    private ExternalMovieDBApiUtil externalMovieDBApiUtil;
+
     @Override
-    public MovieList createMovieList(MovieListParam movieListParam, User user) {
+    public MovieListPojo createMovieList(MovieListParam movieListParam, User user) throws JsonProcessingException {
         MovieList movieList = PojoEntityParamConverter.convertMovieListParamToEntity(movieListParam);
         movieList.setUser(user);
-        return movieListRepository.saveAndFlush(movieList);
+        movieList = movieListRepository.saveAndFlush(movieList);
+        Set<MovieMovieList> eligibleMoviesForList = getEligibleMovieMovieListsForList(movieListParam.movies(), movieList);
+        movieMovieListRepository.saveAllAndFlush(eligibleMoviesForList);
+        movieList.setMovies(eligibleMoviesForList);
+        return PojoEntityParamConverter.convertMovieListEntityToPojo(movieList, eligibleMoviesForList.stream().map(list -> list.getMovie()).toList());
     }
 
     @Override
@@ -39,19 +61,51 @@ public class MovieListServiceImpl implements MovieListService {
     }
 
     @Override
-    public Page<MovieListPojo> getMovieLists(String name, Integer page, User user) {
+    public PagePojo<MovieListPojo> getMovieLists(String name, Integer page, User user) {
         if (page == null) page = 1;
         Pageable pageable = Pageable.ofSize(5).withPage(page - 1);
-        org.springframework.data.domain.Page<MovieList> queryRes;
+        Page<MovieList> queryRes;
         if (name == null) {
             queryRes = movieListRepository.findAllByUserId(user.getId(), pageable);
         } else {
             queryRes = movieListRepository.findAllByUserIdAndMovieListName(user.getId(), name, pageable);
         }
-        return Page.<MovieListPojo>builder()
+
+        return PagePojo.<MovieListPojo>builder()
                 .total_pages(queryRes.getTotalPages())
                 .total_results(queryRes.getNumberOfElements())
                 .page(page)
-                .results(queryRes.getContent().stream().map(PojoEntityParamConverter::convertMovieListEntityToPojo).toList()).build();
+                .results(queryRes.getContent().stream()
+                        .map(movieList -> {
+                            List<Integer> movieIds = movieMovieListRepository.findAllByMovieListId(movieList.getId()).stream().map(list -> list.getMovie().getId()).toList();
+                            return PojoEntityParamConverter.convertMovieListEntityToPojo(movieList, getEligibleMoviesForList(movieIds).stream().toList());
+                        })
+                        .toList())
+                .build();
+    }
+
+    private Set<MovieMovieList> getEligibleMovieMovieListsForList(List<Integer> movieIds, MovieList movieList) {
+        return movieIds.stream()
+                .map(id -> retrieveMovieById(id))
+                .filter(movie -> movie != null)
+                .map(movie -> MovieMovieList.builder().movie(movie).movieList(movieList).build())
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Movie> getEligibleMoviesForList(List<Integer> movieIds) {
+        return movieIds.stream()
+                .map(id -> retrieveMovieById(id))
+                .filter(movie -> movie != null)
+                .collect(Collectors.toSet());
+    }
+
+
+    private Movie retrieveMovieById(int id) {
+        try {
+            return externalMovieDBApiUtil.searchMovieById(id);
+        } catch (JsonProcessingException e) {
+            LOGGER.error(e.getMessage());
+        }
+        return null;
     }
 }

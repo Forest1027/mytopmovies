@@ -275,21 +275,6 @@ databaseChangeLog:
             referencedTableName: MTM_MOVIES
             validate: true
   - changeSet:
-      id: 1642709866366-17
-      author: forest (generated)
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: MOVIE_ID
-            baseTableName: MTM_MOVIE_MOVIE_LIST
-            constraintName: FKAIVNJRLF4UY2AFHDK14RG9BRP
-            deferrable: false
-            initiallyDeferred: false
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
-            referencedColumnNames: ID
-            referencedTableName: MTM_MOVIES
-            validate: true
-  - changeSet:
       id: 1642709866366-18
       author: forest (generated)
       changes:

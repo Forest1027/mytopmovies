@@ -17,4 +17,6 @@ public class TMDBConstants {
 
     public String searchMovieAPI;
 
+    public String searchMovieByIdAPI;
+
 }
