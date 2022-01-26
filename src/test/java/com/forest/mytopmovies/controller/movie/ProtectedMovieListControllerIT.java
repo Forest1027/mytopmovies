@@ -2,12 +2,16 @@ package com.forest.mytopmovies.controller.movie;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.forest.mytopmovies.entity.User;
-import com.forest.mytopmovies.params.movie.MovieListParam;
-import com.forest.mytopmovies.pojos.MovieListPojo;
-import com.forest.mytopmovies.pojos.PagePojo;
+import com.forest.mytopmovies.datamodels.entity.User;
+import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
+import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
+import com.forest.mytopmovies.datamodels.pojos.PagePojo;
 import com.forest.utils.FileReaderUtil;
 import com.forest.utils.IntegrationTest;
+import com.xebialabs.restito.semantics.Condition;
+import com.xebialabs.restito.server.StubServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -21,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
+import static com.xebialabs.restito.semantics.Action.ok;
+import static com.xebialabs.restito.semantics.Action.stringContent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,6 +39,19 @@ class ProtectedMovieListControllerIT extends IntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private StubServer server;
+
+    @BeforeEach
+    public void start() {
+        server = new StubServer(9999);
+        server.start();
+    }
+
+    @AfterEach
+    public void stop() {
+        server.stop();
+    }
+
     @Test
     void canCreateMovieList() throws Exception {
         // given
@@ -40,9 +60,14 @@ class ProtectedMovieListControllerIT extends IntegrationTest {
 
         String movieListName = "list1";
         String description = "test-description";
-        Integer[] movieIds = {1, 2, 3};
+        Integer[] movieIds = {550};
         String movieListJson = mapper.writeValueAsString(defaultMovieList(movieListName, description, movieIds));
         String expectedResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/mtm/createMovieList.json");
+        String expectedTMDBResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/searchMovieById.json");
+
+        whenHttp(server)
+                .match(Condition.endsWithUri("/movie/550"), Condition.parameter("api_key", "test-key"))
+                .then(ok(), stringContent(expectedTMDBResponse));
 
         // when
         MvcResult result = this.mockMvc.perform(post("/protected/movielist")
@@ -71,7 +96,14 @@ class ProtectedMovieListControllerIT extends IntegrationTest {
 
         String movieListName = "test1";
         String description = "test-description";
-        Integer[] movieIds = {1, 2, 3};
+        Integer[] movieIds = {550};
+
+        String expectedTMDBResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/searchMovieById.json");
+
+        whenHttp(server)
+                .match(Condition.endsWithUri("/movie/550"), Condition.parameter("api_key", "test-key"))
+                .then(ok(), stringContent(expectedTMDBResponse));
+
         createMovieList(mapper, movieListName, description, movieIds, token);
 
         // when

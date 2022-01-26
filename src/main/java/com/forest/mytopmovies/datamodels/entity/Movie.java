@@ -1,7 +1,9 @@
-package com.forest.mytopmovies.entity;
+package com.forest.mytopmovies.datamodels.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -23,6 +25,8 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,7 +59,7 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "genre_id ", referencedColumnName = "id"))
     private List<Genre> genres;
 
-    @Column(name = "tmdb_id")
+    @Column(name = "tmdb_id", unique = true)
     private int tmdbId;
 
 }

@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.pojos;
+package com.forest.mytopmovies.datamodels.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MoviePojo {
+public class MovieDto {
     private String poster_path;
 
     private Boolean adult;
@@ -26,6 +26,8 @@ public class MoviePojo {
     private Date release_date;
 
     private List<Integer> genre_ids;
+
+    private List<GenreDto> genres;
 
     private Integer id;
 

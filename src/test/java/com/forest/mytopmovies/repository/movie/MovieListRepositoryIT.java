@@ -1,7 +1,7 @@
 package com.forest.mytopmovies.repository.movie;
 
-import com.forest.mytopmovies.entity.MovieList;
-import com.forest.mytopmovies.entity.User;
+import com.forest.mytopmovies.datamodels.entity.MovieList;
+import com.forest.mytopmovies.datamodels.entity.User;
 import com.forest.mytopmovies.repository.user.UserCrudRepository;
 import com.forest.utils.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;

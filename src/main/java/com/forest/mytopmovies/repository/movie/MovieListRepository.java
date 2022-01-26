@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.repository.movie;
 
-import com.forest.mytopmovies.entity.MovieList;
+import com.forest.mytopmovies.datamodels.entity.MovieList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

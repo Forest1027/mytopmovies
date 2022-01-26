@@ -1,6 +1,5 @@
-package com.forest.mytopmovies.pojos;
+package com.forest.mytopmovies.datamodels.pojos;
 
-import com.forest.mytopmovies.entity.Movie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +20,6 @@ public class MovieListPojo {
 
     private String description;
 
-    private List<Movie> movies;
+    private List<MoviePojo> movies;
 
 }

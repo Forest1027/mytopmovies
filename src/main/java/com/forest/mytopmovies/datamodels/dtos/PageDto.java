@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.pojos;
+package com.forest.mytopmovies.datamodels.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PagePojo<T> {
+public class PageDto<T> {
 
     private Integer page;
 

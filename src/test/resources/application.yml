@@ -8,6 +8,7 @@ constants:
     baseUrl: http://localhost:9999
     tmdbKey: test-key
     searchMovieAPI: /search/movie
+    searchMovieByIdAPI: /movie
 spring:
   liquibase:
     change-log: classpath:db/liquibase-changelog.yml

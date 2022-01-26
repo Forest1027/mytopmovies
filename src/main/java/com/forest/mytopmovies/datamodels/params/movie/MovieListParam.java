@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.params.movie;
+package com.forest.mytopmovies.datamodels.params.movie;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

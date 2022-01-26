@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.service.user;
 
-import com.forest.mytopmovies.entity.User;
+import com.forest.mytopmovies.datamodels.entity.User;
 import java.util.Optional;
 
 /**

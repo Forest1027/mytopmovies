@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.service.user.impl;
 
-import com.forest.mytopmovies.entity.User;
+import com.forest.mytopmovies.datamodels.entity.User;
 import com.forest.mytopmovies.exceptions.UserExistsException;
 import com.forest.mytopmovies.repository.user.UserCrudRepository;
 import com.forest.mytopmovies.service.user.UserCrudService;

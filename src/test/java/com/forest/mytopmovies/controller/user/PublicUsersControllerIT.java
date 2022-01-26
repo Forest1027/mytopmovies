@@ -1,7 +1,7 @@
 package com.forest.mytopmovies.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.forest.mytopmovies.entity.User;
+import com.forest.mytopmovies.datamodels.entity.User;
 import com.forest.utils.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,9 @@
 package com.forest.mytopmovies.controller.movie;
 
-import com.forest.mytopmovies.entity.Movie;
-
-import com.forest.mytopmovies.pojos.PagePojo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.forest.mytopmovies.datamodels.pojos.MoviePojo;
+import com.forest.mytopmovies.datamodels.pojos.PagePojo;
+import com.forest.mytopmovies.exceptions.TMDBHttpRequestException;
 import com.forest.mytopmovies.service.movie.MovieService;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class PublicMovieController {
     }
 
     @GetMapping
-    public ResponseEntity<PagePojo<Movie>> searchMovieByName(@RequestParam String movieName, @RequestParam(required = false) @Valid @Range(min = 1) Integer page) throws Exception {
+    public ResponseEntity<PagePojo<MoviePojo>> searchMovieByName(@RequestParam String movieName, @RequestParam(required = false) @Valid @Range(min = 1) Integer page) throws TMDBHttpRequestException, JsonProcessingException {
         return new ResponseEntity<>(movieService.searchTMDBMovieByName(movieName, page == null ? 1 : page), HttpStatus.OK);
     }
 

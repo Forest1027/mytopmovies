@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.entity;
+package com.forest.mytopmovies.datamodels.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,9 +27,8 @@ public class MovieMovieList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @ManyToOne
-    @JoinColumn(name = "movie_id")
-    Movie movie;
+    @Column(name = "movie_id")
+    int movieId;
 
     @ManyToOne
     @JoinColumn(name = "movie_list_id")

@@ -1,13 +1,13 @@
 package com.forest.mytopmovies.service.movie.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.forest.mytopmovies.entity.Movie;
-import com.forest.mytopmovies.entity.MovieList;
-import com.forest.mytopmovies.entity.MovieMovieList;
-import com.forest.mytopmovies.entity.User;
-import com.forest.mytopmovies.params.movie.MovieListParam;
-import com.forest.mytopmovies.pojos.MovieListPojo;
-import com.forest.mytopmovies.pojos.PagePojo;
+import com.forest.mytopmovies.datamodels.entity.Movie;
+import com.forest.mytopmovies.datamodels.entity.MovieList;
+import com.forest.mytopmovies.datamodels.entity.MovieMovieList;
+import com.forest.mytopmovies.datamodels.entity.User;
+import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
+import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
+import com.forest.mytopmovies.datamodels.pojos.PagePojo;
 import com.forest.mytopmovies.repository.movie.MovieListRepository;
 import com.forest.mytopmovies.repository.movie.MovieMovieListRepository;
 import com.forest.mytopmovies.service.movie.MovieListService;
@@ -91,7 +91,7 @@ class MovieListServiceImplUnitTest extends UnitTest {
         User user = User.builder().username("forest").username("123456").id("test-id").build();
         Movie mockMovie = Movie.builder().id(1).originalTitle(movieName).build();
         Page<MovieList> mockPage = new PageImpl<>(Arrays.asList(MovieList.builder().movieListName(movieListName).build()));
-        List<MovieMovieList> mockMovieMovieLists = Arrays.asList(MovieMovieList.builder().movieList(mockPage.getContent().get(0)).movie(mockMovie).build());
+        List<MovieMovieList> mockMovieMovieLists = Arrays.asList(MovieMovieList.builder().movieList(mockPage.getContent().get(0)).movieId(mockMovie.getId()).build());
 
         when(movieListRepository.findAllByUserId(anyString(), any())).thenReturn(mockPage);
         when(externalMovieDBApiUtil.searchMovieById(anyInt())).thenReturn(mockMovie);
@@ -118,7 +118,7 @@ class MovieListServiceImplUnitTest extends UnitTest {
         User user = User.builder().username("forest").username("123456").id("test-id").build();
         Movie mockMovie = Movie.builder().id(1).originalTitle(movieName).build();
         Page<MovieList> mockPage = new PageImpl<>(Arrays.asList(MovieList.builder().movieListName(movieListName).build()));
-        List<MovieMovieList> mockMovieMovieLists = Arrays.asList(MovieMovieList.builder().movieList(mockPage.getContent().get(0)).movie(mockMovie).build());
+        List<MovieMovieList> mockMovieMovieLists = Arrays.asList(MovieMovieList.builder().movieList(mockPage.getContent().get(0)).movieId(mockMovie.getId()).build());
 
         when(movieListRepository.findAllByUserIdAndMovieListName(anyString(), anyString(), any())).thenReturn(mockPage);
         when(externalMovieDBApiUtil.searchMovieById(anyInt())).thenReturn(mockMovie);

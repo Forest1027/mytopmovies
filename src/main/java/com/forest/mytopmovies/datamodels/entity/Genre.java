@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.entity;
+package com.forest.mytopmovies.datamodels.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

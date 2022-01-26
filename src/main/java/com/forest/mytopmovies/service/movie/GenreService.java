@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.service.movie;
 
-import com.forest.mytopmovies.entity.Genre;
+import com.forest.mytopmovies.datamodels.entity.Genre;
 
 import java.util.Optional;
 

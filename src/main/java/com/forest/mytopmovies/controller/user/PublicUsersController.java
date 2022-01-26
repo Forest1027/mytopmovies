@@ -1,8 +1,8 @@
 package com.forest.mytopmovies.controller.user;
 
-import com.forest.mytopmovies.entity.User;
-import com.forest.mytopmovies.params.user.UserCreateParam;
-import com.forest.mytopmovies.params.user.UserLoginParam;
+import com.forest.mytopmovies.datamodels.entity.User;
+import com.forest.mytopmovies.datamodels.params.user.UserCreateParam;
+import com.forest.mytopmovies.datamodels.params.user.UserLoginParam;
 import com.forest.mytopmovies.service.user.UserAuthService;
 import com.forest.mytopmovies.service.user.UserCrudService;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.service.movie.impl;
 
-import com.forest.mytopmovies.entity.Genre;
+import com.forest.mytopmovies.datamodels.entity.Genre;
 import com.forest.mytopmovies.repository.movie.GenreRepository;
 import com.forest.mytopmovies.service.movie.GenreService;
 import org.springframework.stereotype.Service;

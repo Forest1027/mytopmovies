@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.repository.movie;
 
-import com.forest.mytopmovies.entity.Genre;
+import com.forest.mytopmovies.datamodels.entity.Genre;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

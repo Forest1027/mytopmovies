@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.utils;
 
-import com.forest.mytopmovies.pojos.MoviePojo;
+import com.forest.mytopmovies.datamodels.dtos.MovieDto;
 import com.forest.mytopmovies.service.movie.GenreService;
 import com.forest.utils.UnitTest;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class PojoEntityConverterUnitTest extends UnitTest {
         double avgVote = 7.3;
         Date releaseDate = new Date();
 
-        MoviePojo moviePojo = MoviePojo.builder().id(id)
+        MovieDto movieDto = MovieDto.builder().id(id)
                 .original_title(originalTitle)
                 .title(title)
                 .original_language(originalLanguage)
@@ -37,7 +37,7 @@ class PojoEntityConverterUnitTest extends UnitTest {
                 .build();
 
         // when
-        com.forest.mytopmovies.entity.Movie result = PojoEntityParamConverter.convertMoviePojoToEntity(moviePojo, genreService);
+        com.forest.mytopmovies.datamodels.entity.Movie result = PojoEntityParamDtoConverter.convertMovieDtoToEntity(movieDto, genreService);
 
         // then
         assertThat(result.getId()).isEqualTo(id);

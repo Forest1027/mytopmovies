@@ -1,12 +1,11 @@
 package com.forest.mytopmovies.controller.movie;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.forest.mytopmovies.entity.MovieList;
-import com.forest.mytopmovies.entity.User;
-import com.forest.mytopmovies.params.movie.MovieListParam;
-import com.forest.mytopmovies.params.movie.MovieListUpdateParam;
-import com.forest.mytopmovies.pojos.MovieListPojo;
-import com.forest.mytopmovies.pojos.PagePojo;
+import com.forest.mytopmovies.datamodels.entity.User;
+import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
+import com.forest.mytopmovies.datamodels.params.movie.MovieListUpdateParam;
+import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
+import com.forest.mytopmovies.datamodels.pojos.PagePojo;
 import com.forest.mytopmovies.service.movie.MovieListService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -47,7 +46,7 @@ public class ProtectedMovieListController {
 
     @PutMapping
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<MovieList> updateMovieList(@RequestBody MovieListUpdateParam movieListParam, Authentication authentication) {
+    public ResponseEntity<MovieListPojo> updateMovieList(@RequestBody MovieListUpdateParam movieListParam, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(movieListService.updateMovieList(movieListParam, user), HttpStatus.OK);
     }
