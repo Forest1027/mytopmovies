@@ -9,4 +9,8 @@ public interface MovieMovieListRepository extends JpaRepository<MovieMovieList, 
 
     List<MovieMovieList> findAllByMovieListId(int id);
 
+    void deleteAllByMovieListId(int id);
+
+    void deleteByMovieListIdAndMovieId(int movieListId, int movieId);
+
 }
