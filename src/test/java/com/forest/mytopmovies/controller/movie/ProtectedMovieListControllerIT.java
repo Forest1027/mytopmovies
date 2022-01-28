@@ -29,8 +29,7 @@ import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Action.ok;
 import static com.xebialabs.restito.semantics.Action.stringContent;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,7 +80,32 @@ class ProtectedMovieListControllerIT extends IntegrationTest {
     }
 
     @Test
-    void deleteMovieList() {
+    void deleteMovieList() throws Exception {
+        // given
+        ObjectMapper mapper = new ObjectMapper();
+        String token = registerUser(mapper, "forest2", "123456");
+
+        String movieListName = "test1";
+        String description = "test-description";
+        Integer[] movieIds = {550};
+
+        String expectedTMDBResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/searchMovieById.json");
+
+        whenHttp(server)
+                .match(Condition.endsWithUri("/movie/550"), Condition.parameter("api_key", "test-key"))
+                .then(ok(), stringContent(expectedTMDBResponse));
+
+        String movieListResponse = createMovieList(mapper, movieListName, description, movieIds, token);
+        MovieListPojo movieListPojo = mapper.readValue(movieListResponse, MovieListPojo.class);
+
+        // when
+        MvcResult response = this.mockMvc.perform(delete("/protected/movielist/" + movieListPojo.getId())
+                        .header("Authorization", String.format("Bearer %s", token)))
+                .andDo(print())
+                .andExpect(status().isOk()).andReturn();
+
+        // then
+        assertThat(response.getResponse().getContentAsString()).isEqualTo("Successfully deleted movie list with id " + movieListPojo.getId());
     }
 
     @Test
@@ -92,7 +116,7 @@ class ProtectedMovieListControllerIT extends IntegrationTest {
     void getMovieList() throws Exception {
         // given
         ObjectMapper mapper = new ObjectMapper();
-        String token = registerUser(mapper, "forest2", "123456");
+        String token = registerUser(mapper, "forest4", "123456");
 
         String movieListName = "test1";
         String description = "test-description";
@@ -140,12 +164,13 @@ class ProtectedMovieListControllerIT extends IntegrationTest {
         return registerRes.getResponse().getContentAsString();
     }
 
-    private void createMovieList(ObjectMapper mapper, String movieListName, String description, Integer[] movieIds, String token) throws Exception {
+    private String createMovieList(ObjectMapper mapper, String movieListName, String description, Integer[] movieIds, String token) throws Exception {
         String movieListJson = mapper.writeValueAsString(defaultMovieList(movieListName, description, movieIds));
 
-        this.mockMvc.perform(post("/protected/movielist")
+        MvcResult result = this.mockMvc.perform(post("/protected/movielist")
                         .header("Authorization", String.format("Bearer %s", token))
                         .contentType(MediaType.APPLICATION_JSON).content(movieListJson))
-                .andDo(print());
+                .andDo(print()).andReturn();
+        return result.getResponse().getContentAsString();
     }
 }
