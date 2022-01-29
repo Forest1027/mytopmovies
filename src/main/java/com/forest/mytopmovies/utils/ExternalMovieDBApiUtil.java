@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forest.mytopmovies.constants.TMDBConstants;
-import com.forest.mytopmovies.datamodels.entity.Movie;
-import com.forest.mytopmovies.exceptions.TMDBHttpRequestException;
 import com.forest.mytopmovies.datamodels.dtos.MovieDto;
 import com.forest.mytopmovies.datamodels.dtos.PageDto;
+import com.forest.mytopmovies.datamodels.entity.Movie;
+import com.forest.mytopmovies.exceptions.TMDBHttpRequestException;
 import com.forest.mytopmovies.service.movie.GenreService;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
@@ -18,6 +20,8 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class ExternalMovieDBApiUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalMovieDBApiUtil.class);
 
     private final TMDBConstants tmdbConstants;
 

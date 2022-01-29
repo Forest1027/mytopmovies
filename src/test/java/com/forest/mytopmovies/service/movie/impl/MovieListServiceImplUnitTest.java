@@ -3,13 +3,14 @@ package com.forest.mytopmovies.service.movie.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.forest.mytopmovies.datamodels.entity.Movie;
 import com.forest.mytopmovies.datamodels.entity.MovieList;
-import com.forest.mytopmovies.datamodels.entity.MovieMovieList;
 import com.forest.mytopmovies.datamodels.entity.User;
+import com.forest.mytopmovies.datamodels.params.movie.MovieListMovieUpdateParam;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
+import com.forest.mytopmovies.datamodels.params.movie.MovieListUpdateParam;
 import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
 import com.forest.mytopmovies.datamodels.pojos.PagePojo;
 import com.forest.mytopmovies.repository.movie.MovieListRepository;
-import com.forest.mytopmovies.repository.movie.MovieMovieListRepository;
+import com.forest.mytopmovies.repository.movie.MovieRepository;
 import com.forest.mytopmovies.service.movie.MovieListService;
 import com.forest.mytopmovies.utils.ExternalMovieDBApiUtil;
 import com.forest.utils.UnitTest;
@@ -19,49 +20,77 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 class MovieListServiceImplUnitTest extends UnitTest {
+    private static String movieListName = "list1";
+
+    private static String description = "test-description";
+
+    private static String movieName = "test-movie";
+
+    private static Integer[] movieIds = {1, 2, 3};
+
     private MovieListService underTest;
 
     @Mock
-    private MovieListRepository movieListRepository;
+    private MovieRepository movieRepository;
 
     @Mock
-    private MovieMovieListRepository movieMovieListRepository;
+    private MovieListRepository movieListRepository;
 
     @Mock
     private ExternalMovieDBApiUtil externalMovieDBApiUtil;
 
     @BeforeEach
     void setup() {
-        underTest = new MovieListServiceImpl(movieListRepository, movieMovieListRepository, externalMovieDBApiUtil);
+        underTest = new MovieListServiceImpl(movieRepository, movieListRepository, externalMovieDBApiUtil);
     }
 
     @AfterEach
     void teardown() {
-        verifyNoMoreInteractions(movieListRepository, movieMovieListRepository, externalMovieDBApiUtil);
+        verifyNoMoreInteractions(movieListRepository, movieRepository, externalMovieDBApiUtil);
     }
 
     @Test
     void canCreateMovieList() throws JsonProcessingException {
         // given
-        String movieListName = "list1";
-        String description = "test-description";
-        String movieName = "test-movie";
-        Integer[] movieIds = {1, 2, 3};
-
         MovieListParam param = new MovieListParam(movieListName, description, Arrays.asList(movieIds));
         User user = User.builder().username("forest").username("123456").build();
         MovieList mockMovieList = MovieList.builder().movieListName(movieListName).description(description).build();
         Movie mockMovie = Movie.builder().id(1).originalTitle(movieName).build();
 
+        when(movieRepository.findByTmdbId(anyInt())).thenReturn(Optional.of(mockMovie));
+        when(movieListRepository.saveAndFlush(any())).thenReturn(mockMovieList);
+
+        // when
+        MovieListPojo movieList = underTest.createMovieList(param, user);
+
+        // then
+        verify(movieRepository, times(movieIds.length * 2)).findByTmdbId(anyInt());
+        verify(movieListRepository).saveAndFlush(any());
+        assertThat(movieList.getMovies().get(0).getOriginalTitle()).isEqualTo(movieName);
+    }
+
+    @Test
+    void canCreateMovieListWithMovieToSave() throws JsonProcessingException {
+        // given
+        MovieListParam param = new MovieListParam(movieListName, description, Arrays.asList(movieIds));
+        User user = User.builder().username("forest").username("123456").build();
+        MovieList mockMovieList = MovieList.builder().movieListName(movieListName).description(description).build();
+        Movie mockMovie = Movie.builder().id(1).originalTitle(movieName).build();
+
+        when(movieRepository.findByTmdbId(anyInt())).thenReturn(Optional.empty());
         when(movieListRepository.saveAndFlush(any())).thenReturn(mockMovieList);
         when(externalMovieDBApiUtil.searchMovieById(anyInt())).thenReturn(mockMovie);
 
@@ -69,71 +98,100 @@ class MovieListServiceImplUnitTest extends UnitTest {
         MovieListPojo movieList = underTest.createMovieList(param, user);
 
         // then
+        verify(movieRepository, times(movieIds.length * 2)).findByTmdbId(anyInt());
+        verify(movieRepository).saveAllAndFlush(any());
         verify(movieListRepository).saveAndFlush(any());
-        verify(movieMovieListRepository).saveAllAndFlush(any());
-        verify(externalMovieDBApiUtil, times(movieIds.length)).searchMovieById(anyInt());
-        assertThat(movieList.getMovies().get(0).getOriginalTitle()).isEqualTo(movieName);
+        assertThat(movieList.getMovieListName()).isEqualTo(movieListName);
     }
 
     @Test
-    void deleteMovieList() {
-    }
-
-    @Test
-    void updateMovieList() {
-    }
-
-    @Test
-    void canGetMovieListsWithDefaultPage() throws JsonProcessingException {
+    void canDeleteMovieList() {
         // given
-        String movieName = "test-movie";
-        String movieListName = "list1";
-        User user = User.builder().username("forest").username("123456").id("test-id").build();
-        Movie mockMovie = Movie.builder().id(1).originalTitle(movieName).build();
-        Page<MovieList> mockPage = new PageImpl<>(Arrays.asList(MovieList.builder().movieListName(movieListName).build()));
-        List<MovieMovieList> mockMovieMovieLists = Arrays.asList(MovieMovieList.builder().movieList(mockPage.getContent().get(0)).movieId(mockMovie.getId()).build());
-
-        when(movieListRepository.findAllByUserId(anyString(), any())).thenReturn(mockPage);
-        when(externalMovieDBApiUtil.searchMovieById(anyInt())).thenReturn(mockMovie);
-        when(movieMovieListRepository.findAllByMovieListId(anyInt())).thenReturn(mockMovieMovieLists);
+        int movieListId = 1;
+        MovieList mockMovieList = MovieList.builder().id(movieListId).movieListName(movieListName).description(description).build();
+        when(movieListRepository.findById(anyInt())).thenReturn(Optional.of(mockMovieList));
 
         // when
-        PagePojo<MovieListPojo> movieLists = underTest.getMovieLists(null, null, user);
+        underTest.deleteMovieList(movieListId, any());
 
         // then
-        assertThat(movieLists.getPage()).isEqualTo(1);
-        verify(movieListRepository).findAllByUserId(anyString(), any());
-        verify(externalMovieDBApiUtil).searchMovieById(anyInt());
-        verify(movieMovieListRepository).findAllByMovieListId(anyInt());
-        assertThat(movieLists.getResults().size()).isEqualTo(1);
-        assertThat(movieLists.getResults().get(0).getMovieListName()).isEqualTo(movieListName);
-        assertThat(movieLists.getResults().get(0).getMovies().get(0).getOriginalTitle()).isEqualTo(movieName);
+        verify(movieListRepository).findById(movieListId);
+        verify(movieListRepository).deleteById(movieListId);
     }
 
     @Test
-    void canGetMovieListsWithPassedPage() throws JsonProcessingException {
+    void canUpdateMovieList() {
         // given
-        String movieName = "test-movie";
-        String movieListName = "list1";
-        User user = User.builder().username("forest").username("123456").id("test-id").build();
+        MovieListUpdateParam param = new MovieListUpdateParam(1, movieListName, description, Arrays.asList(movieIds));
+        User user = User.builder().username("forest").username("123456").id("test").build();
+        MovieList mockMovieList = MovieList.builder().id(1).movieListName(movieListName).description(description).build();
         Movie mockMovie = Movie.builder().id(1).originalTitle(movieName).build();
-        Page<MovieList> mockPage = new PageImpl<>(Arrays.asList(MovieList.builder().movieListName(movieListName).build()));
-        List<MovieMovieList> mockMovieMovieLists = Arrays.asList(MovieMovieList.builder().movieList(mockPage.getContent().get(0)).movieId(mockMovie.getId()).build());
 
-        when(movieListRepository.findAllByUserIdAndMovieListName(anyString(), anyString(), any())).thenReturn(mockPage);
-        when(externalMovieDBApiUtil.searchMovieById(anyInt())).thenReturn(mockMovie);
-        when(movieMovieListRepository.findAllByMovieListId(anyInt())).thenReturn(mockMovieMovieLists);
+        when(movieListRepository.findByUserIdAndId(user.getId(), mockMovieList.getId())).thenReturn(Optional.of(mockMovieList));
+        when(movieRepository.findByTmdbId(anyInt())).thenReturn(Optional.of(mockMovie));
 
         // when
-        PagePojo<MovieListPojo> movieLists = underTest.getMovieLists("", 2, user);
+        MovieListPojo result = underTest.updateMovieList(param, user);
 
         // then
-        assertThat(movieLists.getPage()).isEqualTo(2);
-        verify(movieListRepository).findAllByUserIdAndMovieListName(anyString(), anyString(), any());
-        verify(externalMovieDBApiUtil).searchMovieById(anyInt());
-        verify(movieMovieListRepository).findAllByMovieListId(anyInt());
-        assertThat(movieLists.getResults().size()).isEqualTo(1);
-        assertThat(movieLists.getResults().get(0).getMovieListName()).isEqualTo(movieListName);
-        assertThat(movieLists.getResults().get(0).getMovies().get(0).getOriginalTitle()).isEqualTo(movieName);
+        verify(movieListRepository).findByUserIdAndId(anyString(), anyInt());
+        verify(movieRepository, times(movieIds.length * 2)).findByTmdbId(anyInt());
+        assertThat(result.getMovieListName()).isEqualTo(movieListName);
+        assertThat(result.getDescription()).isEqualTo(description);
+    }
+
+    @Test
+    void canGetMovieLists() {
+        // given
+        MovieList mockMovieList = MovieList.builder().movieListName(movieListName).description(description).build();
+        Pageable pageable = Pageable.ofSize(5).withPage(0);
+        Page<MovieList> mockPage = new PageImpl<MovieList>(new ArrayList<>(Arrays.asList(new MovieList[]{mockMovieList})), pageable, 0);
+        User user = User.builder().username("forest").username("123456").id("test").build();
+        when(movieListRepository.findAllByUserIdAndMovieListName(user.getId(), mockMovieList.getMovieListName(), pageable)).thenReturn(mockPage);
+
+        // when
+        PagePojo<MovieListPojo> result = underTest.getMovieLists(mockMovieList.getMovieListName(), null, user);
+
+        // then
+        verify(movieListRepository).findAllByUserIdAndMovieListName(user.getId(), mockMovieList.getMovieListName(), pageable);
+        assertThat(result.getResults().get(0).getMovieListName()).isEqualTo(movieListName);
+    }
+
+    @Test
+    void canAddMovieToList() {
+        // given
+        MovieListMovieUpdateParam param = new MovieListMovieUpdateParam(1, Arrays.asList(movieIds));
+        User user = User.builder().username("forest").username("123456").build();
+        MovieList mockMovieList = MovieList.builder().movieListName(movieListName).description(description).id(1).movies(new HashSet<>()).build();
+        Movie mockMovie = Movie.builder().id(1).originalTitle(movieName).build();
+
+        when(movieRepository.findByTmdbId(anyInt())).thenReturn(Optional.of(mockMovie));
+        when(movieListRepository.findById(param.id())).thenReturn(Optional.of(mockMovieList));
+        when(movieListRepository.findByUserIdAndId(user.getId(), mockMovieList.getId())).thenReturn(Optional.of(mockMovieList));
+
+        // when
+        MovieListPojo result = underTest.addMoviesToList(param, user);
+
+        // then
+        verify(movieRepository, times(movieIds.length * 2)).findByTmdbId(anyInt());
+        verify(movieListRepository).findById(mockMovieList.getId());
+        verify(movieListRepository).findByUserIdAndId(user.getId(), mockMovieList.getId());
+    }
+
+    @Test
+    void canGetMovieListsByUserAndId() {
+        // given
+        MovieListMovieUpdateParam param = new MovieListMovieUpdateParam(1, Arrays.asList(movieIds));
+        User user = User.builder().username("forest").username("123456").build();
+        MovieList mockMovieList = MovieList.builder().movieListName(movieListName).description(description).id(1).movies(new HashSet<>()).build();
+        Movie mockMovie = Movie.builder().id(1).originalTitle(movieName).build();
+        when(movieListRepository.findByUserIdAndId(user.getId(), mockMovieList.getId())).thenReturn(Optional.of(mockMovieList));
+
+        // when
+        MovieListPojo result = underTest.getMovieListsByUserAndId(mockMovieList.getId(), user);
+
+        // then
+        verify(movieListRepository).findByUserIdAndId(user.getId(), mockMovieList.getId());
+        assertThat(result.getMovieListName()).isEqualTo(movieListName);
     }
 }

@@ -21,5 +21,4 @@ public interface MovieListService {
 
     MovieListPojo getMovieListsByUserAndId(int id, User user);
 
-    MovieListPojo deleteFromMovieList(MovieListMovieUpdateParam movieListParam, User user);
 }

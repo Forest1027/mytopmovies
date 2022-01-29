@@ -3,7 +3,6 @@ package com.forest.mytopmovies.service.movie.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.forest.mytopmovies.datamodels.entity.Movie;
 import com.forest.mytopmovies.datamodels.entity.MovieList;
-import com.forest.mytopmovies.datamodels.entity.MovieMovieList;
 import com.forest.mytopmovies.datamodels.entity.User;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListMovieUpdateParam;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
@@ -11,9 +10,8 @@ import com.forest.mytopmovies.datamodels.params.movie.MovieListUpdateParam;
 import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
 import com.forest.mytopmovies.datamodels.pojos.PagePojo;
 import com.forest.mytopmovies.exceptions.MovieListNotFoundException;
-import com.forest.mytopmovies.exceptions.TMDBHttpRequestException;
 import com.forest.mytopmovies.repository.movie.MovieListRepository;
-import com.forest.mytopmovies.repository.movie.MovieMovieListRepository;
+import com.forest.mytopmovies.repository.movie.MovieRepository;
 import com.forest.mytopmovies.service.movie.MovieListService;
 import com.forest.mytopmovies.utils.ExternalMovieDBApiUtil;
 import com.forest.mytopmovies.utils.PojoEntityParamDtoConverter;
@@ -38,19 +36,22 @@ public class MovieListServiceImpl implements MovieListService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieListServiceImpl.class);
 
-    private final MovieListRepository movieListRepository;
+    private final MovieRepository movieRepository;
 
-    private final MovieMovieListRepository movieMovieListRepository;
+    private final MovieListRepository movieListRepository;
 
     private ExternalMovieDBApiUtil externalMovieDBApiUtil;
 
     @Override
     public MovieListPojo createMovieList(MovieListParam movieListParam, User user) throws JsonProcessingException {
+        saveUnSavedMovies(movieListParam.movies());
+        Set<Movie> movies = movieListParam.movies().stream().map(movieRepository::findByTmdbId).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet());
+        // save movie list to db
         MovieList movieList = PojoEntityParamDtoConverter.convertMovieListParamToEntity(movieListParam);
         movieList.setUser(user);
-        movieList = movieListRepository.saveAndFlush(movieList);
-        saveEligibleMoviesToList(movieListParam.movies(), movieList);
-        return getMovieListsByUserAndId(movieList.getId(), user);
+        movieList.setMovies(movies);
+        movieListRepository.saveAndFlush(movieList);
+        return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList);
     }
 
     @Override
@@ -59,47 +60,37 @@ public class MovieListServiceImpl implements MovieListService {
         if (!movieList.isPresent()) {
             throw new MovieListNotFoundException(id);
         }
-        movieMovieListRepository.deleteAllByMovieListId(id);
         movieListRepository.deleteById(id);
         return "Successfully deleted movie list with id " + id;
     }
 
     @Override
     public MovieListPojo updateMovieList(MovieListUpdateParam movieListParam, User user) {
-        Optional<MovieList> movieListOpt = movieListRepository.findById(movieListParam.id());
-        if (!movieListOpt.isPresent()) {
+        // retrieve movie list
+        Optional<MovieList> optionalMovieList = movieListRepository.findByUserIdAndId(user.getId(), movieListParam.id());
+        if (!optionalMovieList.isPresent()) {
             throw new MovieListNotFoundException(movieListParam.id());
         }
-        MovieList movieList = movieListOpt.get();
-        movieList.setMovieListName(movieListParam.movieListName());
+        MovieList movieList = optionalMovieList.get();
+        saveUnSavedMovies(movieListParam.movies());
+        Set<Movie> movies = movieListParam.movies().stream().map(movieRepository::findByTmdbId).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet());
+        movieList.setMovies(movies);
         movieList.setDescription(movieListParam.description());
-        movieListRepository.saveAndFlush(movieList);
-
-        // get content of related movies
-        Set<Movie> eligibleMoviesForList = getEligibleMoviesForList(movieMovieListRepository.findAllByMovieListId(movieListParam.id()).stream().map(MovieMovieList::getMovieId).toList());
-        return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList, eligibleMoviesForList.stream().toList());
+        movieList.setMovieListName(movieListParam.movieListName());
+        return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList);
     }
 
     @Override
     public PagePojo<MovieListPojo> getMovieLists(String name, Integer page, User user) {
         if (page == null) page = 1;
         Pageable pageable = Pageable.ofSize(5).withPage(page - 1);
-        Page<MovieList> queryRes;
-        if (name == null) {
-            queryRes = movieListRepository.findAllByUserId(user.getId(), pageable);
-        } else {
-            queryRes = movieListRepository.findAllByUserIdAndMovieListName(user.getId(), name, pageable);
-        }
-
+        Page<MovieList> queryRes = movieListRepository.findAllByUserIdAndMovieListName(user.getId(), name, pageable);
         return PagePojo.<MovieListPojo>builder()
                 .totalPages(queryRes.getTotalPages())
                 .totalResults(queryRes.getNumberOfElements())
                 .page(page)
                 .results(queryRes.getContent().stream()
-                        .map(movieList -> {
-                            List<Integer> movieIds = movieMovieListRepository.findAllByMovieListId(movieList.getId()).stream().map(MovieMovieList::getMovieId).toList();
-                            return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList, getEligibleMoviesForList(movieIds).stream().toList());
-                        })
+                        .map(PojoEntityParamDtoConverter::convertMovieListEntityToPojo)
                         .toList())
                 .build();
     }
@@ -111,7 +102,11 @@ public class MovieListServiceImpl implements MovieListService {
             throw new MovieListNotFoundException(movieListParam.id());
         }
         MovieList movieList = movieListOpt.get();
-        saveEligibleMoviesToList(movieListParam.movies(), movieList);
+        saveUnSavedMovies(movieListParam.movies());
+        Set<Movie> movies = movieListParam.movies().stream().map(id -> movieRepository.findByTmdbId(id).get()).collect(Collectors.toSet());
+        for (Movie movie : movies) {
+            movieList.getMovies().add(movie);
+        }
         return getMovieListsByUserAndId(movieListParam.id(), user);
     }
 
@@ -122,50 +117,30 @@ public class MovieListServiceImpl implements MovieListService {
             throw new MovieListNotFoundException(id);
         }
         MovieList movieList = movieListOpt.get();
-        List<Integer> movieIds = movieMovieListRepository.findAllByMovieListId(movieList.getId()).stream().map(MovieMovieList::getMovieId).toList();
-        return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList, getEligibleMoviesForList(movieIds).stream().toList());
-
-    }
-
-    @Override
-    public MovieListPojo deleteFromMovieList(MovieListMovieUpdateParam movieListParam, User user) {
-        Optional<MovieList> movieListOpt = movieListRepository.findById(movieListParam.id());
-        if (!movieListOpt.isPresent()) {
-            throw new MovieListNotFoundException(movieListParam.id());
-        }
-        MovieList movieList = movieListOpt.get();
-        movieListParam.movies().forEach(movieId -> movieMovieListRepository.deleteByMovieListIdAndMovieId(movieList.getId(), movieId));
-        return getMovieListsByUserAndId(movieListParam.id(), user);
-    }
-
-    private Set<MovieMovieList> getEligibleMovieMovieListsForList(Set<Movie> movies, MovieList movieList) {
-        return movies.stream()
-                .map(movie -> MovieMovieList.builder().movieId(movie.getId()).movieList(movieList).build())
-                .collect(Collectors.toSet());
-    }
-
-    private Set<Movie> getEligibleMoviesForList(List<Integer> movieIds) {
-        return movieIds.stream()
-                .map(this::retrieveMovieById)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+        return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList);
     }
 
 
     private Movie retrieveMovieById(int id) {
         try {
             return externalMovieDBApiUtil.searchMovieById(id);
-        } catch (JsonProcessingException | TMDBHttpRequestException e) {
+        } catch (JsonProcessingException e) {
             LOGGER.error(e.getMessage());
         }
         return null;
     }
 
-    private Set<Movie> saveEligibleMoviesToList(List<Integer> movieIds, MovieList movieList) {
-        Set<Movie> eligibleMovies = getEligibleMoviesForList(movieIds);
-        Set<MovieMovieList> eligibleMovieMovieLists = getEligibleMovieMovieListsForList(eligibleMovies, movieList);
-        movieMovieListRepository.saveAllAndFlush(eligibleMovieMovieLists);
-        return eligibleMovies;
+    private Set<Integer> findNewMoviesToBeSaved(List<Integer> movieIds) {
+        return movieIds.stream().filter(id -> !movieRepository.findByTmdbId(id).isPresent()).collect(Collectors.toSet());
+    }
+
+    private void saveUnSavedMovies(List<Integer> movieIds) {
+        Set<Integer> moviesToBeSaved = findNewMoviesToBeSaved(movieIds);
+        if (!moviesToBeSaved.isEmpty()) {
+            Set<Movie> movieRestrieved = moviesToBeSaved.stream().map(this::retrieveMovieById).filter(Objects::nonNull).collect(Collectors.toSet());
+            // save movies to db
+            movieRepository.saveAllAndFlush(movieRestrieved);
+        }
     }
 
 }

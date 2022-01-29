@@ -29,7 +29,7 @@ class PublicUsersControllerIT extends IntegrationTest {
         String json = mapper.writeValueAsString(user);
 
         // when
-        MvcResult result = this.mockMvc.perform(post("/public/users/register")
+        MvcResult result = this.mockMvc.perform(post("/api/v1/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andDo(print())

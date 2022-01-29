@@ -6,7 +6,6 @@ import com.forest.mytopmovies.datamodels.params.movie.MovieListMovieUpdateParam;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListUpdateParam;
 import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
-import com.forest.mytopmovies.datamodels.pojos.PagePojo;
 import com.forest.mytopmovies.service.movie.MovieListService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -21,13 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/protected/movielist")
+@RequestMapping("/api/v1/movielist")
 @AllArgsConstructor
-public class ProtectedMovieListController {
+public class MovieListController {
 
     private final MovieListService movieListService;
 
@@ -38,11 +36,11 @@ public class ProtectedMovieListController {
         return new ResponseEntity<>(movieListService.createMovieList(movieListParam, user), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @GetMapping("/{id}")
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<String> deleteMovieList(@PathVariable int id, Authentication authentication) {
+    public ResponseEntity<MovieListPojo> getMovieListById(@PathVariable int id, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return new ResponseEntity<>(movieListService.deleteMovieList(id, user), HttpStatus.OK);
+        return new ResponseEntity<>(movieListService.getMovieListsByUserAndId(id, user), HttpStatus.OK);
     }
 
     @PutMapping
@@ -52,31 +50,18 @@ public class ProtectedMovieListController {
         return new ResponseEntity<>(movieListService.updateMovieList(movieListParam, user), HttpStatus.OK);
     }
 
-    @GetMapping
+    @DeleteMapping("/{id}")
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<PagePojo<MovieListPojo>> getMovieList(@RequestParam(required = false) String name, @RequestParam(required = false) Integer page, Authentication authentication) {
+    public ResponseEntity<String> deleteMovieList(@PathVariable int id, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return new ResponseEntity<>(movieListService.getMovieLists(name, page, user), HttpStatus.OK);
+        return new ResponseEntity<>(movieListService.deleteMovieList(id, user), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<MovieListPojo> getMovieListById(@PathVariable int id, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return new ResponseEntity<>(movieListService.getMovieListsByUserAndId(id, user), HttpStatus.OK);
-    }
-
-    @PostMapping("/movies")
+    @PutMapping("/movies")
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
     public ResponseEntity<MovieListPojo> addToMovieList(@RequestBody MovieListMovieUpdateParam movieListParam, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(movieListService.addMoviesToList(movieListParam, user), HttpStatus.OK);
     }
 
-    @DeleteMapping("/movies")
-    @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<MovieListPojo> deleteFromMovieList(@RequestBody MovieListMovieUpdateParam movieListParam, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return new ResponseEntity<>(movieListService.deleteFromMovieList(movieListParam, user), HttpStatus.OK);
-    }
 }

@@ -6,16 +6,18 @@ import com.forest.mytopmovies.datamodels.dtos.PageDto;
 import com.forest.mytopmovies.datamodels.entity.Genre;
 import com.forest.mytopmovies.datamodels.entity.Movie;
 import com.forest.mytopmovies.datamodels.entity.MovieList;
-import com.forest.mytopmovies.datamodels.entity.MovieMovieList;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
 import com.forest.mytopmovies.datamodels.pojos.GenrePojo;
 import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
 import com.forest.mytopmovies.datamodels.pojos.MoviePojo;
 import com.forest.mytopmovies.datamodels.pojos.PagePojo;
 import com.forest.mytopmovies.service.movie.GenreService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -24,14 +26,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PojoEntityParamDtoConverter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PojoEntityParamDtoConverter.class);
 
     private PojoEntityParamDtoConverter() {
     }
 
     public static MovieList convertMovieListParamToEntity(MovieListParam movieListParam) {
-        Set<MovieMovieList> movies = new HashSet<>();
+        Set<Movie> movies = new HashSet<>();
         if (movieListParam.movies() != null) {
-            movies = movieListParam.movies().stream().map(id -> MovieMovieList.builder().movieId(id).build()).collect(Collectors.toSet());
+            movies = movieListParam.movies().stream().map(id -> Movie.builder().build()).collect(Collectors.toSet());
         }
         return MovieList.builder()
                 .movieListName(movieListParam.movieListName())
@@ -48,7 +51,6 @@ public class PojoEntityParamDtoConverter {
             genres = getGenreList(movieDto.getGenre_ids(), genreService);
         }
         return Movie.builder()
-                .id(movieDto.getId())
                 .originalTitle(movieDto.getOriginal_title())
                 .title(movieDto.getTitle())
                 .originalLanguage(movieDto.getOriginal_language())
@@ -70,12 +72,14 @@ public class PojoEntityParamDtoConverter {
                 .toList();
     }
 
-    public static MovieListPojo convertMovieListEntityToPojo(MovieList movieList, List<Movie> movies) {
+    public static MovieListPojo convertMovieListEntityToPojo(MovieList movieList) {
         return MovieListPojo.builder()
                 .id(movieList.getId())
                 .movieListName(movieList.getMovieListName())
                 .description(movieList.getDescription())
-                .movies(movies.stream().map(PojoEntityParamDtoConverter::convertMovieEntityToPojo).toList())
+                .movies(Optional.ofNullable(movieList.getMovies())
+                        .map(Collection::stream).orElse(Stream.empty())
+                        .sorted(Comparator.comparingInt(Movie::getTmdbId)).map(PojoEntityParamDtoConverter::convertMovieEntityToPojo).toList())
                 .build();
     }
 
@@ -94,8 +98,30 @@ public class PojoEntityParamDtoConverter {
                 .build();
     }
 
+    public static Movie convertMoviePojoToEntity(MoviePojo movie) {
+        return Movie.builder()
+                .tmdbId(movie.getTmdbId())
+                .averageVote(movie.getAverageVote())
+                .genres(Optional.ofNullable(movie.getGenres())
+                        .map(Collection::stream).orElse(Stream.empty())
+                        .map(PojoEntityParamDtoConverter::convertGenrePojoToEntity).toList())
+                .originalTitle(movie.getOriginalTitle())
+                .originalLanguage(movie.getOriginalLanguage())
+                .overview(movie.getOverview())
+                .releaseDate(movie.getReleaseDate())
+                .title(movie.getTitle())
+                .build();
+    }
+
     public static GenrePojo convertGenreEntityToPojo(Genre genre) {
         return GenrePojo.builder()
+                .tmdbId(genre.getTmdbId())
+                .genreName(genre.getGenreName())
+                .build();
+    }
+
+    public static Genre convertGenrePojoToEntity(GenrePojo genre) {
+        return Genre.builder()
                 .tmdbId(genre.getTmdbId())
                 .genreName(genre.getGenreName())
                 .build();
@@ -112,12 +138,15 @@ public class PojoEntityParamDtoConverter {
 
     private static List<Genre> getGenreList(List<Integer> genreIds, GenreService genreService) {
         List<Genre> genreList = new ArrayList<>();
+        LOGGER.info("in get genrelist");
         if (genreIds != null) {
             genreList = genreIds.stream()
                     .map(genreService::findGenreByTMDBId)
                     .filter(Optional::isPresent)
                     .map(Optional::get).toList();
         }
+        LOGGER.info("after genrelist");
+        genreList.forEach(genre -> LOGGER.info(genre.getGenreName()));
         return genreList;
     }
 }

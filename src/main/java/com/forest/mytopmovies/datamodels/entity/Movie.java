@@ -19,6 +19,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "mtm_movies")
@@ -62,4 +63,16 @@ public class Movie {
     @Column(name = "tmdb_id", unique = true)
     private int tmdbId;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return tmdbId == movie.tmdbId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tmdbId);
+    }
 }
