@@ -60,7 +60,7 @@ public class MovieListServiceImpl implements MovieListService {
 
     @Override
     public String deleteMovieList(int id, User user) {
-        movieListRepository.findById(id).ifPresentOrElse(movieList -> movieRepository.deleteById(id), () -> {
+        movieListRepository.findById(id).ifPresentOrElse(movieList -> movieListRepository.deleteById(id), () -> {
             throw new MovieListNotFoundException(id);
         });
         return "Successfully deleted movie list with id " + id;

@@ -3,12 +3,14 @@ package com.forest.mytopmovies.datamodels.pojos;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.Date;
 import java.util.List;
 
 @Builder
 @Data
+@Jacksonized
 public class MoviePojo {
     private final int tmdbId;
 

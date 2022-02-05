@@ -3,12 +3,14 @@ package com.forest.mytopmovies.datamodels.dtos;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.Date;
 import java.util.List;
 
 @Builder
 @Data
+@Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MovieDto {
     private final String poster_path;
