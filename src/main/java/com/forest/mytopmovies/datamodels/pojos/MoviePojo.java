@@ -1,38 +1,30 @@
 package com.forest.mytopmovies.datamodels.pojos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class MoviePojo {
+    private final int tmdbId;
 
-    private int tmdbId;
+    private final String originalTitle;
 
-    private String originalTitle;
+    private final String title;
 
-    private String title;
+    private final String originalLanguage;
 
-    private String originalLanguage;
+    private final String overview;
 
-    private String overview;
-
-    private double averageVote;
+    private final double averageVote;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date releaseDate;
+    private final Date releaseDate;
 
-    private List<GenrePojo> genres;
-
+    private final List<GenrePojo> genres;
 
 }

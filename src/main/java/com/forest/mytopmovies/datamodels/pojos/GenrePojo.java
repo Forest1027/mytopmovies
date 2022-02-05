@@ -1,20 +1,13 @@
 package com.forest.mytopmovies.datamodels.pojos;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class GenrePojo {
+    private final int tmdbId;
 
-    private int tmdbId;
-
-    private String genreName;
+    private final String genreName;
 
 }

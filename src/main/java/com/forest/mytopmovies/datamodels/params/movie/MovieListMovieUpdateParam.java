@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public record MovieListMovieUpdateParam(
-        @NotNull @NotBlank Integer id,
-        List<Integer> movies) {
+        @NotNull(message = "id cannot be empty") @NotBlank(message = "id cannot be empty") Integer id,
+        List<Integer> movies
+) {
 }

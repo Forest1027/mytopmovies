@@ -16,7 +16,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/users")
 @AllArgsConstructor
-public class UsersController {
+public class UserController {
     private final UserAuthService authService;
 
     private final UserCrudService userCrudService;
@@ -39,6 +39,8 @@ public class UsersController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody UserLoginParam user) {
-        return new ResponseEntity<>(authService.login(user.username(), user.password()).orElseThrow(() -> new RuntimeException("Invalid login and/or password")), HttpStatus.OK);
+        return authService.login(user.username(), user.password())
+                .map(token -> new ResponseEntity<>(token, HttpStatus.OK))
+                .orElseThrow(() -> new RuntimeException("Invalid login and/or password"));
     }
 }

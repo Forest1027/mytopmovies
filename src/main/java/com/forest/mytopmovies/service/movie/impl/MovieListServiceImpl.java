@@ -43,9 +43,13 @@ public class MovieListServiceImpl implements MovieListService {
     private ExternalMovieDBApiUtil externalMovieDBApiUtil;
 
     @Override
-    public MovieListPojo createMovieList(MovieListParam movieListParam, User user) throws JsonProcessingException {
+    public MovieListPojo createMovieList(MovieListParam movieListParam, User user) {
         saveUnSavedMovies(movieListParam.movies());
-        Set<Movie> movies = movieListParam.movies().stream().map(movieRepository::findByTmdbId).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet());
+        Set<Movie> movies = movieListParam.movies().stream()
+                .map(movieRepository::findByTmdbId)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
         // save movie list to db
         MovieList movieList = PojoEntityParamDtoConverter.convertMovieListParamToEntity(movieListParam);
         movieList.setUser(user);
@@ -56,11 +60,9 @@ public class MovieListServiceImpl implements MovieListService {
 
     @Override
     public String deleteMovieList(int id, User user) {
-        Optional<MovieList> movieList = movieListRepository.findById(id);
-        if (!movieList.isPresent()) {
+        movieListRepository.findById(id).ifPresentOrElse(movieList -> movieRepository.deleteById(id), () -> {
             throw new MovieListNotFoundException(id);
-        }
-        movieListRepository.deleteById(id);
+        });
         return "Successfully deleted movie list with id " + id;
     }
 
@@ -73,7 +75,11 @@ public class MovieListServiceImpl implements MovieListService {
         }
         MovieList movieList = optionalMovieList.get();
         saveUnSavedMovies(movieListParam.movies());
-        Set<Movie> movies = movieListParam.movies().stream().map(movieRepository::findByTmdbId).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet());
+        Set<Movie> movies = movieListParam.movies().stream()
+                .map(movieRepository::findByTmdbId)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
         movieList.setMovies(movies);
         movieList.setDescription(movieListParam.description());
         movieList.setMovieListName(movieListParam.movieListName());
@@ -103,7 +109,9 @@ public class MovieListServiceImpl implements MovieListService {
         }
         MovieList movieList = movieListOpt.get();
         saveUnSavedMovies(movieListParam.movies());
-        Set<Movie> movies = movieListParam.movies().stream().map(id -> movieRepository.findByTmdbId(id).get()).collect(Collectors.toSet());
+        Set<Movie> movies = movieListParam.movies().stream()
+                .map(id -> movieRepository.findByTmdbId(id).get())
+                .collect(Collectors.toSet());
         for (Movie movie : movies) {
             movieList.getMovies().add(movie);
         }
@@ -131,13 +139,18 @@ public class MovieListServiceImpl implements MovieListService {
     }
 
     private Set<Integer> findNewMoviesToBeSaved(List<Integer> movieIds) {
-        return movieIds.stream().filter(id -> !movieRepository.findByTmdbId(id).isPresent()).collect(Collectors.toSet());
+        return movieIds.stream()
+                .filter(id -> !movieRepository.findByTmdbId(id).isPresent())
+                .collect(Collectors.toSet());
     }
 
     private void saveUnSavedMovies(List<Integer> movieIds) {
         Set<Integer> moviesToBeSaved = findNewMoviesToBeSaved(movieIds);
         if (!moviesToBeSaved.isEmpty()) {
-            Set<Movie> movieRestrieved = moviesToBeSaved.stream().map(this::retrieveMovieById).filter(Objects::nonNull).collect(Collectors.toSet());
+            Set<Movie> movieRestrieved = moviesToBeSaved.stream()
+                    .map(this::retrieveMovieById)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
             // save movies to db
             movieRepository.saveAllAndFlush(movieRestrieved);
         }

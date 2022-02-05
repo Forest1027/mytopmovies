@@ -26,22 +26,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> validationExceptionHandler(MethodArgumentNotValidException ex) {
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
         String message = fieldErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toSet()).stream().collect(Collectors.joining(System.lineSeparator()));
-        LOGGER.error(message);
+        LOGGER.error(String.format("Validation error: %s", message));
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(TMDBHttpRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ResponseEntity<String> validationExceptionHandler(TMDBHttpRequestException ex) {
-        LOGGER.error(ex.getMessage());
+    public ResponseEntity<String> tmdbExceptionHandler(TMDBHttpRequestException ex) {
+        LOGGER.error(String.format("TMDB request error: %s", ex.getMessage()));
         return new ResponseEntity<>("Failure when execute request to TMDB API", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResponseEntity<String> defaultErrorHandler(Exception ex) {
-        LOGGER.error(ex.getMessage());
+        LOGGER.error(String.format("Application error: %s", ex.getMessage()));
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

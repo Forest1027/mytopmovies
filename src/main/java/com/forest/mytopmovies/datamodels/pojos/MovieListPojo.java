@@ -1,25 +1,19 @@
 package com.forest.mytopmovies.datamodels.pojos;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.List;
 
-@Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class MovieListPojo {
-    private int id;
+    private final int id;
 
-    private String movieListName;
+    private final String movieListName;
 
-    private String description;
+    private final String description;
 
-    private List<MoviePojo> movies;
+    private final List<MoviePojo> movies;
 
 }

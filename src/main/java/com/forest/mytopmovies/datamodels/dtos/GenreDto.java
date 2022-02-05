@@ -1,18 +1,12 @@
 package com.forest.mytopmovies.datamodels.dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class GenreDto {
-    private int id;
+    private final int id;
 
-    private String name;
+    private final String name;
 }

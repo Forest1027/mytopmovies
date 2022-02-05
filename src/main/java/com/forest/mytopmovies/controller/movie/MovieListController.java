@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/movielist")
 @AllArgsConstructor
@@ -31,7 +33,7 @@ public class MovieListController {
 
     @PostMapping
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<MovieListPojo> createMovieList(@RequestBody MovieListParam movieListParam, Authentication authentication) throws JsonProcessingException {
+    public ResponseEntity<MovieListPojo> createMovieList(@Valid @RequestBody MovieListParam movieListParam, Authentication authentication) throws JsonProcessingException {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(movieListService.createMovieList(movieListParam, user), HttpStatus.OK);
     }
@@ -45,7 +47,7 @@ public class MovieListController {
 
     @PutMapping
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<MovieListPojo> updateMovieList(@RequestBody MovieListUpdateParam movieListParam, Authentication authentication) {
+    public ResponseEntity<MovieListPojo> updateMovieList(@Valid @RequestBody MovieListUpdateParam movieListParam, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(movieListService.updateMovieList(movieListParam, user), HttpStatus.OK);
     }
@@ -59,7 +61,7 @@ public class MovieListController {
 
     @PutMapping("/movies")
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<MovieListPojo> addToMovieList(@RequestBody MovieListMovieUpdateParam movieListParam, Authentication authentication) {
+    public ResponseEntity<MovieListPojo> addToMovieList(@Valid @RequestBody MovieListMovieUpdateParam movieListParam, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(movieListService.addMoviesToList(movieListParam, user), HttpStatus.OK);
     }

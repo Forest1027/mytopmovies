@@ -119,33 +119,6 @@ databaseChangeLog:
                   type: INT
             tableName: MTM_MOVIE_MOVIE_LIST
   - changeSet:
-      id: 1643474811016-6
-      author: forest (generated)
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  autoIncrement: true
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-                    primaryKeyName: CONSTRAINT_D
-                  name: ID
-                  type: INT
-              - column:
-                  name: MOVIE_ID
-                  type: INT
-              - column:
-                  name: REVIEW
-                  type: CHARACTER LARGE OBJECT
-              - column:
-                  name: VOTE
-                  type: INT
-              - column:
-                  name: USER_ID
-                  type: VARCHAR(255)
-            tableName: MTM_MOVIE_REVIEWS
-  - changeSet:
       id: 1643474811016-7
       author: forest (generated)
       changes:
@@ -243,16 +216,6 @@ databaseChangeLog:
             indexName: FKOONNG6IL4JRQE7TM6X331JNTF_INDEX_B
             tableName: MTM_MOVIE_MOVIE_LIST
   - changeSet:
-      id: 1643474811016-16
-      author: forest (generated)
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: USER_ID
-            indexName: FKR05DTBIYDQLJYP4EW1GLRIHYA_INDEX_D
-            tableName: MTM_MOVIE_REVIEWS
-  - changeSet:
       id: 1643474811016-17
       author: forest (generated)
       changes:
@@ -326,21 +289,6 @@ databaseChangeLog:
             onUpdate: RESTRICT
             referencedColumnNames: ID
             referencedTableName: MTM_MOVIE_LISTS
-            validate: true
-  - changeSet:
-      id: 1643474811016-22
-      author: forest (generated)
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: USER_ID
-            baseTableName: MTM_MOVIE_REVIEWS
-            constraintName: FKR05DTBIYDQLJYP4EW1GLRIHYA
-            deferrable: false
-            initiallyDeferred: false
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
-            referencedColumnNames: ID
-            referencedTableName: MTM_USERS
             validate: true
   - changeSet:
       id: 1642579100999-23

@@ -1,24 +1,18 @@
 package com.forest.mytopmovies.datamodels.pojos;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.List;
 
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class PagePojo<T> {
-    private Integer page;
+    private final Integer page;
 
-    private Integer totalResults;
+    private final Integer totalResults;
 
-    private Integer totalPages;
+    private final Integer totalPages;
 
-    private List<T> results;
+    private final List<T> results;
 }

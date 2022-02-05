@@ -1,50 +1,44 @@
 package com.forest.mytopmovies.datamodels.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MovieDto {
-    private String poster_path;
+    private final String poster_path;
 
-    private Boolean adult;
+    private final Boolean adult;
 
-    private String overview;
+    private final String overview;
 
-    private Date release_date;
+    private final Date release_date;
 
-    private List<Integer> genre_ids;
+    private final List<Integer> genre_ids;
 
-    private List<GenreDto> genres;
+    private final List<GenreDto> genres;
 
-    private Integer id;
+    private final Integer id;
 
-    private String original_title;
+    private final String original_title;
 
-    private String original_language;
+    private final String original_language;
 
-    private String title;
+    private final String title;
 
-    private String backdrop_path;
+    private final String backdrop_path;
 
-    private Double popularity;
+    private final Double popularity;
 
-    private Integer vote_count;
+    private final Integer vote_count;
 
-    private Boolean video;
+    private final Boolean video;
 
-    private Double vote_average;
+    private final Double vote_average;
 
 }

@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.utils;
 
-import com.forest.mytopmovies.constants.TMDBConstants;
+import com.forest.mytopmovies.properties.TMDBProperties;
 import com.forest.mytopmovies.datamodels.entity.Movie;
 import com.forest.mytopmovies.service.movie.GenreService;
 import com.forest.utils.FileReaderUtil;
@@ -24,17 +24,17 @@ class ExternalMovieDBApiUtilUnitTest extends UnitTest {
 
     private ExternalMovieDBApiUtil underTest;
 
-    private TMDBConstants tmdbConstants;
+    private TMDBProperties tmdbProperties;
 
     @Mock
     private GenreService genreService;
 
     @BeforeEach
     void setUp() {
-        tmdbConstants = new TMDBConstants();
-        tmdbConstants.baseUrl = "http://localhost:9999";
-        tmdbConstants.searchMovieAPI = "/search/movie";
-        underTest = new ExternalMovieDBApiUtil(tmdbConstants, genreService);
+        tmdbProperties = new TMDBProperties();
+        tmdbProperties.baseUrl = "http://localhost:9999";
+        tmdbProperties.searchMovieAPI = "/search/movie";
+        underTest = new ExternalMovieDBApiUtil(tmdbProperties, genreService);
     }
 
     @Test

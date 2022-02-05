@@ -1,15 +1,13 @@
-package com.forest.mytopmovies.constants;
+package com.forest.mytopmovies.properties;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties("constants.tmdb")
-@Getter
-@Setter
-public class TMDBConstants {
+@Data
+public class TMDBProperties {
 
     public String baseUrl;
 

@@ -1,26 +1,20 @@
 package com.forest.mytopmovies.datamodels.dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.List;
 
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class PageDto<T> {
 
-    private Integer page;
+    private final Integer page;
 
-    private Integer total_results;
+    private final Integer total_results;
 
-    private Integer total_pages;
+    private final Integer total_pages;
 
-    private List<T> results;
+    private final List<T> results;
 
 }

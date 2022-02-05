@@ -1,7 +1,7 @@
 package com.forest.mytopmovies.service.user.impl;
 
-import com.forest.mytopmovies.constants.JwtConstants;
 import com.forest.mytopmovies.exceptions.TokenExpiredException;
+import com.forest.mytopmovies.properties.JwtProperties;
 import com.forest.mytopmovies.service.user.TokenService;
 import com.forest.mytopmovies.utils.LambdaExceptionWrappers;
 import io.jsonwebtoken.Claims;
@@ -11,26 +11,24 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.compression.GzipCompressionCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @Service
 public class TokenServiceImpl implements Clock, TokenService {
     private static final String DOT = ".";
     private static final GzipCompressionCodec COMPRESSION_CODEC = new GzipCompressionCodec();
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenServiceImpl.class);
 
-    private final JwtConstants constants;
+    private final JwtProperties constants;
 
     private final java.time.Clock clock;
 
-    public TokenServiceImpl(JwtConstants constants, java.time.Clock clock) {
+    public TokenServiceImpl(JwtProperties constants, java.time.Clock clock) {
         this.constants = constants;
         this.clock = clock;
     }
@@ -80,14 +78,15 @@ public class TokenServiceImpl implements Clock, TokenService {
     }
 
     private Map<String, String> parseClaims(Supplier<Claims> toClaims) {
-        Claims claims = toClaims.get();
-        if (claims == null) {
-            LOGGER.error("JWT token has expired");
-            return new HashMap<>();
-        }
+        return Optional.ofNullable(toClaims.get())
+                .map(this::convertClaimsToMap)
+                .orElseThrow(() -> new TokenExpiredException());
+    }
+
+    private Map<String, String> convertClaimsToMap(Claims claims) {
         Map<String, String> attributes = new HashMap<>();
         claims.forEach((key, val) -> attributes.put(key, String.valueOf(val)));
-        return Map.copyOf(attributes);
+        return attributes;
     }
 
     @Override

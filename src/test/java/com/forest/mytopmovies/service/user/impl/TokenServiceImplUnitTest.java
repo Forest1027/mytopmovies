@@ -1,7 +1,7 @@
 package com.forest.mytopmovies.service.user.impl;
 
 import com.forest.mytopmovies.config.ClockConfiguration;
-import com.forest.mytopmovies.constants.JwtConstants;
+import com.forest.mytopmovies.properties.JwtProperties;
 import com.forest.mytopmovies.service.user.TokenService;
 import com.forest.utils.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ class TokenServiceImplUnitTest extends UnitTest {
 
     @BeforeEach
     void setUp() {
-        JwtConstants constants = new JwtConstants();
+        JwtProperties constants = new JwtProperties();
         constants.issuer = "Forest";
         constants.clockSkewSec = 120;
         constants.expireSec = 1800;
