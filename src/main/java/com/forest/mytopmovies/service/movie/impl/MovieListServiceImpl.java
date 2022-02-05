@@ -69,21 +69,19 @@ public class MovieListServiceImpl implements MovieListService {
     @Override
     public MovieListPojo updateMovieList(MovieListUpdateParam movieListParam, User user) {
         // retrieve movie list
-        Optional<MovieList> optionalMovieList = movieListRepository.findByUserIdAndId(user.getId(), movieListParam.id());
-        if (!optionalMovieList.isPresent()) {
-            throw new MovieListNotFoundException(movieListParam.id());
-        }
-        MovieList movieList = optionalMovieList.get();
-        saveUnSavedMovies(movieListParam.movies());
-        Set<Movie> movies = movieListParam.movies().stream()
-                .map(movieRepository::findByTmdbId)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
-        movieList.setMovies(movies);
-        movieList.setDescription(movieListParam.description());
-        movieList.setMovieListName(movieListParam.movieListName());
-        return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList);
+        return movieListRepository.findByUserIdAndId(user.getId(), movieListParam.id())
+                .map(movieList -> {
+                    saveUnSavedMovies(movieListParam.movies());
+                    Set<Movie> movies = movieListParam.movies().stream()
+                            .map(movieRepository::findByTmdbId)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .collect(Collectors.toSet());
+                    movieList.setMovies(movies);
+                    movieList.setDescription(movieListParam.description());
+                    movieList.setMovieListName(movieListParam.movieListName());
+                    return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList);
+                }).orElseThrow(() -> new MovieListNotFoundException(movieListParam.id()));
     }
 
     @Override
@@ -103,29 +101,24 @@ public class MovieListServiceImpl implements MovieListService {
 
     @Override
     public MovieListPojo addMoviesToList(MovieListMovieUpdateParam movieListParam, User user) {
-        Optional<MovieList> movieListOpt = movieListRepository.findById(movieListParam.id());
-        if (!movieListOpt.isPresent()) {
-            throw new MovieListNotFoundException(movieListParam.id());
-        }
-        MovieList movieList = movieListOpt.get();
-        saveUnSavedMovies(movieListParam.movies());
-        Set<Movie> movies = movieListParam.movies().stream()
-                .map(id -> movieRepository.findByTmdbId(id).get())
-                .collect(Collectors.toSet());
-        for (Movie movie : movies) {
-            movieList.getMovies().add(movie);
-        }
-        return getMovieListsByUserAndId(movieListParam.id(), user);
+        return movieListRepository.findById(movieListParam.id())
+                .map(movieList -> {
+                    saveUnSavedMovies(movieListParam.movies());
+                    Set<Movie> movies = movieListParam.movies().stream()
+                            .map(id -> movieRepository.findByTmdbId(id).get())
+                            .collect(Collectors.toSet());
+                    for (Movie movie : movies) {
+                        movieList.getMovies().add(movie);
+                    }
+                    return getMovieListsByUserAndId(movieListParam.id(), user);
+                }).orElseThrow(() -> new MovieListNotFoundException(movieListParam.id()));
     }
 
     @Override
     public MovieListPojo getMovieListsByUserAndId(int id, User user) {
-        Optional<MovieList> movieListOpt = movieListRepository.findByUserIdAndId(user.getId(), id);
-        if (!movieListOpt.isPresent()) {
-            throw new MovieListNotFoundException(id);
-        }
-        MovieList movieList = movieListOpt.get();
-        return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList);
+        return movieListRepository.findByUserIdAndId(user.getId(), id)
+                .map(PojoEntityParamDtoConverter::convertMovieListEntityToPojo)
+                .orElseThrow(() -> new MovieListNotFoundException(id));
     }
 
 
