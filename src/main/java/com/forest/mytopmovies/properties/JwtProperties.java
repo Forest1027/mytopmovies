@@ -9,7 +9,10 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class JwtProperties {
     public String issuer;
+
     public int expireSec;
+
     public long clockSkewSec;
+
     public String secretKey;
 }

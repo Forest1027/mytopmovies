@@ -1,7 +1,7 @@
 package com.forest.mytopmovies.utils;
 
-import com.forest.mytopmovies.properties.TMDBProperties;
 import com.forest.mytopmovies.datamodels.entity.Movie;
+import com.forest.mytopmovies.properties.TMDBProperties;
 import com.forest.mytopmovies.service.movie.GenreService;
 import com.forest.utils.FileReaderUtil;
 import com.forest.utils.UnitTest;

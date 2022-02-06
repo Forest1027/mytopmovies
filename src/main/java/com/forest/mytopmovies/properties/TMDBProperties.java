@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("constants.tmdb")
 @Data
 public class TMDBProperties {
-
     public String baseUrl;
 
     public String tmdbKey;

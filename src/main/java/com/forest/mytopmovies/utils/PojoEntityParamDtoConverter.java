@@ -2,7 +2,6 @@ package com.forest.mytopmovies.utils;
 
 import com.forest.mytopmovies.datamodels.dtos.GenreDto;
 import com.forest.mytopmovies.datamodels.dtos.MovieDto;
-import com.forest.mytopmovies.datamodels.dtos.PageDto;
 import com.forest.mytopmovies.datamodels.entity.Genre;
 import com.forest.mytopmovies.datamodels.entity.Movie;
 import com.forest.mytopmovies.datamodels.entity.MovieList;
@@ -10,7 +9,6 @@ import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
 import com.forest.mytopmovies.datamodels.pojos.GenrePojo;
 import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
 import com.forest.mytopmovies.datamodels.pojos.MoviePojo;
-import com.forest.mytopmovies.datamodels.pojos.PagePojo;
 import com.forest.mytopmovies.service.movie.GenreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,41 +96,10 @@ public class PojoEntityParamDtoConverter {
                 .build();
     }
 
-    public static Movie convertMoviePojoToEntity(MoviePojo movie) {
-        return Movie.builder()
-                .tmdbId(movie.getTmdbId())
-                .averageVote(movie.getAverageVote())
-                .genres(Optional.ofNullable(movie.getGenres())
-                        .map(Collection::stream).orElse(Stream.empty())
-                        .map(PojoEntityParamDtoConverter::convertGenrePojoToEntity).toList())
-                .originalTitle(movie.getOriginalTitle())
-                .originalLanguage(movie.getOriginalLanguage())
-                .overview(movie.getOverview())
-                .releaseDate(movie.getReleaseDate())
-                .title(movie.getTitle())
-                .build();
-    }
-
     public static GenrePojo convertGenreEntityToPojo(Genre genre) {
         return GenrePojo.builder()
                 .tmdbId(genre.getTmdbId())
                 .genreName(genre.getGenreName())
-                .build();
-    }
-
-    public static Genre convertGenrePojoToEntity(GenrePojo genre) {
-        return Genre.builder()
-                .tmdbId(genre.getTmdbId())
-                .genreName(genre.getGenreName())
-                .build();
-    }
-
-    public static <T> PagePojo<T> convertPageDtoToPojo(PageDto<T> pageDto) {
-        return PagePojo.<T>builder()
-                .page(pageDto.getPage())
-                .totalPages(pageDto.getTotal_pages())
-                .results(pageDto.getResults())
-                .totalResults(pageDto.getTotal_results())
                 .build();
     }
 

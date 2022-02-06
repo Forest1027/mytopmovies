@@ -130,7 +130,7 @@ class MovieListControllerIT extends IntegrationTest {
         MovieListPojo responsePojo = mapper.readValue(response.getResponse().getContentAsString(), MovieListPojo.class);
         assertThat(responsePojo.getMovieListName()).isEqualTo(movieListNameUpdate);
         assertThat(responsePojo.getDescription()).isEqualTo(descriptionUpdate);
-        assertThat(responsePojo.getMovies().size()).isEqualTo(movieIdsUpdate.length);
+        assertThat(responsePojo.getMovies()).hasSize(movieIdsUpdate.length);
     }
 
     @Test
@@ -159,7 +159,7 @@ class MovieListControllerIT extends IntegrationTest {
         MovieListPojo responsePojo = mapper.readValue(response.getResponse().getContentAsString(), MovieListPojo.class);
         assertThat(responsePojo.getMovieListName()).isEqualTo(baseMovieListName);
         assertThat(responsePojo.getDescription()).isEqualTo(baseDescription);
-        assertThat(responsePojo.getMovies().size()).isEqualTo(baseMovieIds.length);
+        assertThat(responsePojo.getMovies()).hasSize(baseMovieIds.length);
     }
 
     @Test
@@ -197,7 +197,7 @@ class MovieListControllerIT extends IntegrationTest {
 
         // then
         MovieListPojo responsePojo = mapper.readValue(response.getResponse().getContentAsString(), MovieListPojo.class);
-        assertThat(responsePojo.getMovies().size()).isEqualTo(movieIdsUpdate.length + baseMovieIds.length);
+        assertThat(responsePojo.getMovies()).hasSize(movieIdsUpdate.length + baseMovieIds.length);
     }
 
     @Test

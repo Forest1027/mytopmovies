@@ -22,6 +22,8 @@ import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import javax.servlet.Filter;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -94,8 +96,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * Disable Spring boot automatic filter registration.
      */
     @Bean
-    FilterRegistrationBean disableAutoRegistration(final TokenAuthenticationFilter filter) {
-        FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+    FilterRegistrationBean<Filter> disableAutoRegistration(final TokenAuthenticationFilter filter) {
+        FilterRegistrationBean<Filter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
         return registration;
     }

@@ -11,7 +11,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 
 @Aspect
 @Component
@@ -23,10 +22,10 @@ public class LoggingHandler {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         try {
             HttpServletRequest request = attributes.getRequest();
-            LOGGER.debug(String.format("REST request ===> %s  %s, in class ===> %s with parameter ===> %s", request.getMethod(),
-                    request.getRequestURL(), joinPoint.getSignature().getDeclaringTypeName(), Arrays.toString(joinPoint.getArgs())));
+            LOGGER.debug("REST request ===> {}  {}, in class ===> {} with parameter ===> {}", request.getMethod(),
+                    request.getRequestURL(), joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getArgs());
         } catch (NullPointerException exception) {
-            LOGGER.debug(String.format("REST request (CAN'T GET INFO), in class ===> %s with parameter ===> %s", joinPoint.getSignature().getDeclaringTypeName(), Arrays.toString(joinPoint.getArgs())));
+            LOGGER.debug("REST request (CAN'T GET INFO), in class ===> {} with parameter ===> {}", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getArgs());
         }
 
     }
@@ -36,9 +35,9 @@ public class LoggingHandler {
         try {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
-            LOGGER.debug(String.format("REST response ===> %s, for request ===> %s  %s", result.toString(), request.getMethod(), request.getRequestURL()));
+            LOGGER.debug("REST response ===> {}, for request ===> {}  {}", result, request.getMethod(), request.getRequestURL());
         } catch (NullPointerException exception) {
-            LOGGER.debug(String.format("REST response ===> %s, (CAN'T GET INFO))", result.toString()));
+            LOGGER.debug("REST response ===> {}, (CAN'T GET INFO))", result);
         }
     }
 

@@ -22,7 +22,7 @@ public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-
+        // no additional authentication
     }
 
     @Override

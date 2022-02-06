@@ -52,14 +52,14 @@ public class HttpUtil {
 
     static ExchangeFilterFunction logRequest() {
         return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
-            LOGGER.debug(String.format("Sending GET request: %s", clientRequest.url()));
+            LOGGER.debug("Sending GET request: {}", clientRequest.url());
             return Mono.just(clientRequest);
         });
     }
 
     static ExchangeFilterFunction logResponse() {
         return ExchangeFilterFunction.ofResponseProcessor(clientResponse -> {
-            LOGGER.debug(String.format("Response Status Code: %s", clientResponse.statusCode()));
+            LOGGER.debug("Response Status Code: {}", clientResponse.statusCode());
             return Mono.just(clientResponse);
         });
     }

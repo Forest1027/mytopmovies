@@ -80,7 +80,7 @@ public class TokenServiceImpl implements Clock, TokenService {
     private Map<String, String> parseClaims(Supplier<Claims> toClaims) {
         return Optional.ofNullable(toClaims.get())
                 .map(this::convertClaimsToMap)
-                .orElseThrow(() -> new TokenExpiredException());
+                .orElseThrow(TokenExpiredException::new);
     }
 
     private Map<String, String> convertClaimsToMap(Claims claims) {
