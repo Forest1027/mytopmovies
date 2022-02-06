@@ -39,7 +39,7 @@ class UserCrudServiceImplUnitTest extends UnitTest {
     }
 
     @Test
-    void willThrowUserExistException() {
+    void canThrowUserExistException() {
         // given
         String username = "forest";
         User user = User.builder().username(username).password("123").build();
@@ -53,18 +53,6 @@ class UserCrudServiceImplUnitTest extends UnitTest {
 
         // then
         assertEquals(exception.getMessage(), expectedException);
-    }
-
-    @Test
-    void canFind() {
-        // given
-        String id = "test";
-
-        // when
-        underTest.findOneById(id);
-
-        // then
-        verify(userCrudRepository).findById(id);
     }
 
     @Test

@@ -9,7 +9,5 @@ import java.util.Optional;
 public interface UserCrudService {
     User save(User user);
 
-    Optional<User> findOneById(String id);
-
     Optional<User> findOneByUsername(String username);
 }

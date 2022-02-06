@@ -81,6 +81,29 @@ class SearchControllerIT extends IntegrationTest {
     }
 
     @Test
+    void canSearchMovieByNameWithPassedPage() throws Exception {
+        // given
+        String movieName = "Don't look up";
+        String expectedResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/search.json");
+        String expectedResponseMTM = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/mtm/searchMovie.json");
+        String uri = "/search/movie";
+        int page = 1;
+        whenHttp(server)
+                .match(Condition.endsWithUri(uri), Condition.parameter("api_key", "test-key"))
+                .then(ok(), stringContent(expectedResponse));
+
+        // when
+        MvcResult result = this.mockMvc.perform(get("/api/v1/search/movies?query=" + movieName+"&page="+page))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // then
+        verifyHttp(server).once(Condition.endsWithUri(uri), Condition.parameter("api_key", "test-key"));
+        JSONAssert.assertEquals(result.getResponse().getContentAsString(), expectedResponseMTM, JSONCompareMode.LENIENT);
+    }
+
+    @Test
     void canThrowTMDBExceptionWhenFailure() throws Exception {
         // given
         String movieName = "Don't look up";

@@ -32,8 +32,10 @@ import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Action.ok;
 import static com.xebialabs.restito.semantics.Action.stringContent;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -224,6 +226,34 @@ class MovieListControllerIT extends IntegrationTest {
 
         // then
         assertThat(response.getResponse().getContentAsString()).isEqualTo("Successfully deleted movie list with id " + movieListPojo.getId());
+    }
+
+    @Test
+    @Order(6)
+    void cantDeleteMovieList() throws Exception {
+        // given
+        ObjectMapper mapper = new ObjectMapper();
+        String token = registerUser(mapper, "forest6", "123456");
+
+        String expectedTMDBResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/searchMovieById.json");
+
+        whenHttp(server)
+                .match(Condition.endsWithUri("/movie/550"), Condition.parameter("api_key", "test-key"))
+                .then(ok(), stringContent(expectedTMDBResponse));
+
+        String movieListResponse = createMovieList(mapper, baseMovieListName, baseDescription, baseMovieIds, token);
+        MovieListPojo movieListPojo = mapper.readValue(movieListResponse, MovieListPojo.class);
+        int passedId = movieListPojo.getId() + 1;
+
+        // when
+
+        // then
+        this.mockMvc.perform(delete("/api/v1/movielist/" + passedId)
+                        .header("Authorization", String.format("Bearer %s", token)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Movie list with id " + passedId + " is not found.")))
+                .andReturn();
     }
 
     private static User defaultUser(String username, String password) {
