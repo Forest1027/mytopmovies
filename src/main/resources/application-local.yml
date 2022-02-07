@@ -1,13 +1,3 @@
-#spring:
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    database-platform: org.hibernate.dialect.PostgreSQLDialect
-#    show-sql: true
-#  datasource:
-#    url: "jdbc:postgresql://localhost:5432/MTM"
-#    username: ${db_username}
-#    password: ${db_password}
 spring:
   jpa:
     hibernate:

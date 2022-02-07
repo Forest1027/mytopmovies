@@ -2,10 +2,12 @@ package com.forest.mytopmovies.controller.movie;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forest.mytopmovies.datamodels.entity.Genre;
 import com.forest.mytopmovies.datamodels.entity.User;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
 import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
 import com.forest.mytopmovies.datamodels.pojos.PagePojo;
+import com.forest.mytopmovies.repository.movie.GenreRepository;
 import com.forest.utils.FileReaderUtil;
 import com.forest.utils.IntegrationTest;
 import com.xebialabs.restito.semantics.Condition;
@@ -16,11 +18,11 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,11 +41,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@AutoConfigureTestDatabase
+@Transactional
 class SearchControllerIT extends IntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private GenreRepository genreRepository;
 
     private StubServer server;
 
@@ -51,6 +56,12 @@ class SearchControllerIT extends IntegrationTest {
     public void start() {
         server = new StubServer(9999);
         server.start();
+        Genre genre1 = Genre.builder().tmdbId(18).genreName("Drama").build();
+        Genre genre2 = Genre.builder().tmdbId(35).genreName("Comedy").build();
+        Genre genre3 = Genre.builder().tmdbId(878).genreName("Science Fiction").build();
+        genreRepository.save(genre1);
+        genreRepository.save(genre2);
+        genreRepository.save(genre3);
     }
 
     @AfterEach

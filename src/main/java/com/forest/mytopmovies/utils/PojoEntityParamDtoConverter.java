@@ -10,8 +10,6 @@ import com.forest.mytopmovies.datamodels.pojos.GenrePojo;
 import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
 import com.forest.mytopmovies.datamodels.pojos.MoviePojo;
 import com.forest.mytopmovies.service.movie.GenreService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PojoEntityParamDtoConverter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PojoEntityParamDtoConverter.class);
 
     private PojoEntityParamDtoConverter() {
     }
@@ -105,15 +102,12 @@ public class PojoEntityParamDtoConverter {
 
     private static List<Genre> getGenreList(List<Integer> genreIds, GenreService genreService) {
         List<Genre> genreList = new ArrayList<>();
-        LOGGER.info("in get genrelist");
         if (genreIds != null) {
             genreList = genreIds.stream()
                     .map(genreService::findGenreByTMDBId)
                     .filter(Optional::isPresent)
                     .map(Optional::get).toList();
         }
-        LOGGER.info("after genrelist");
-        genreList.forEach(genre -> LOGGER.info(genre.getGenreName()));
         return genreList;
     }
 }

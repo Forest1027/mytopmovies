@@ -5,9 +5,9 @@ You can download the project and run in your local.
 # Run the project
 For local environment, the H2 database is used for simplicity. To run the project, please follow the steps below.
 
-1. In your root directory, run `./mvnw clean package` to build package. If it's in windows, please use mvnw.cmd
+1. In your root directory, run `./mvnw clean package` to build package. If it's in windows, please use mvnw.cmd.
 
-2. Execute below in your root directory. We are setting `spring.profiles.active` to local so `application-local.yml` is used
+2. Execute below in your root directory. We are setting `spring.profiles.active` to local so `application-local.yml` is used.
 
 ```
 java -jar -Dspring.profiles.active=local -Djwt_key=test target/mytopmovies-0.0.1-SNAPSHOT.jar
