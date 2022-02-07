@@ -7,10 +7,9 @@ import com.forest.utils.UnitTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -41,8 +40,10 @@ class UserAuthServiceImplUnitTest extends UnitTest {
         // given
         String username = "forest";
         String password = "123";
+
         // when
         underTest.login(username, password);
+
         // then
         verify(userCrudService).findOneByUsername(username);
     }
@@ -51,8 +52,10 @@ class UserAuthServiceImplUnitTest extends UnitTest {
     void canInteractWithTokenService() {
         // given
         String token = "test-token";
+
         // when
         underTest.findByToken(token);
+
         // then
         verify(tokenService).verify(token);
     }

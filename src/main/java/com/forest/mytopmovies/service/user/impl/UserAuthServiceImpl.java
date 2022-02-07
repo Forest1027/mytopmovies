@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.service.user.impl;
 
-import com.forest.mytopmovies.entity.User;
+import com.forest.mytopmovies.datamodels.entity.User;
 import com.forest.mytopmovies.service.user.TokenService;
 import com.forest.mytopmovies.service.user.UserAuthService;
 import com.forest.mytopmovies.service.user.UserCrudService;

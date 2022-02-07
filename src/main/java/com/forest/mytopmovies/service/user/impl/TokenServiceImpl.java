@@ -1,14 +1,22 @@
 package com.forest.mytopmovies.service.user.impl;
 
-import com.forest.mytopmovies.constants.JwtConstants;
+import com.forest.mytopmovies.exceptions.TokenExpiredException;
+import com.forest.mytopmovies.properties.JwtProperties;
 import com.forest.mytopmovies.service.user.TokenService;
-import io.jsonwebtoken.*;
+import com.forest.mytopmovies.utils.LambdaExceptionWrappers;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Clock;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.compression.GzipCompressionCodec;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @Service
@@ -16,11 +24,11 @@ public class TokenServiceImpl implements Clock, TokenService {
     private static final String DOT = ".";
     private static final GzipCompressionCodec COMPRESSION_CODEC = new GzipCompressionCodec();
 
-    private final JwtConstants constants;
+    private final JwtProperties constants;
 
     private final java.time.Clock clock;
 
-    public TokenServiceImpl(JwtConstants constants, java.time.Clock clock) {
+    public TokenServiceImpl(JwtProperties constants, java.time.Clock clock) {
         this.constants = constants;
         this.clock = clock;
     }
@@ -43,9 +51,9 @@ public class TokenServiceImpl implements Clock, TokenService {
     }
 
     @Override
-    public Map<String, String> verify(String token) {
+    public Map<String, String> verify(String token) throws TokenExpiredException {
         JwtParser parser = jwtParser().setSigningKey(constants.secretKey);
-        return parseClaims(() -> parser.parseClaimsJws(token).getBody());
+        return parseClaims(LambdaExceptionWrappers.supplierWrapper(() -> parser.parseClaimsJws(token).getBody(), ExpiredJwtException.class));
     }
 
     private String newToken(Map<String, String> attributes, int expireInSec) {
@@ -70,10 +78,15 @@ public class TokenServiceImpl implements Clock, TokenService {
     }
 
     private Map<String, String> parseClaims(Supplier<Claims> toClaims) {
-        Claims claims = toClaims.get();
+        return Optional.ofNullable(toClaims.get())
+                .map(this::convertClaimsToMap)
+                .orElseThrow(TokenExpiredException::new);
+    }
+
+    private Map<String, String> convertClaimsToMap(Claims claims) {
         Map<String, String> attributes = new HashMap<>();
         claims.forEach((key, val) -> attributes.put(key, String.valueOf(val)));
-        return Map.copyOf(attributes);
+        return attributes;
     }
 
     @Override

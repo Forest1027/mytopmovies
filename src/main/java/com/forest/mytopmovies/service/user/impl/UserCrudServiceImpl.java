@@ -1,6 +1,6 @@
 package com.forest.mytopmovies.service.user.impl;
 
-import com.forest.mytopmovies.entity.User;
+import com.forest.mytopmovies.datamodels.entity.User;
 import com.forest.mytopmovies.exceptions.UserExistsException;
 import com.forest.mytopmovies.repository.user.UserCrudRepository;
 import com.forest.mytopmovies.service.user.UserCrudService;
@@ -26,13 +26,8 @@ public class UserCrudServiceImpl implements UserCrudService {
     }
 
     @Override
-    public Optional<User> findOneById(String id) {
-        return userCrudRepository.findById(id);
-    }
-
-    @Override
     public Optional<User> findOneByUsername(String username) {
-        return userCrudRepository.findOneByUsernameAndActiveIsTrue(username);
+        return userCrudRepository.findOneByUsernameAndActive(username, true);
     }
 
 }

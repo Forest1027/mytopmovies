@@ -22,14 +22,19 @@ import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import javax.servlet.Filter;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(
-            new AntPathRequestMatcher("/public/**"),
+            new AntPathRequestMatcher("/api/v1/users/**"),
+            new AntPathRequestMatcher("/api/v1/search/movies"),
             new AntPathRequestMatcher("/v3/api-docs/**"),
             new AntPathRequestMatcher("/swagger-ui/**"),
-            new AntPathRequestMatcher("/swagger-ui.html"));
+            new AntPathRequestMatcher("/swagger-ui.html"),
+            new AntPathRequestMatcher("/h2-console/*")
+    );
 
     private static final RequestMatcher PROTECTED_URLS = new NegatedRequestMatcher(PUBLIC_URLS);
 
@@ -78,7 +83,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     SimpleUrlAuthenticationSuccessHandler successHandler() {
         SimpleUrlAuthenticationSuccessHandler successHandler = new SimpleUrlAuthenticationSuccessHandler();
-//        successHandler.setRedirectStrategy(new NoRedirectStrategy());
+        successHandler.setRedirectStrategy(new NoRedirectStrategy());
         return successHandler;
     }
 
@@ -91,8 +96,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * Disable Spring boot automatic filter registration.
      */
     @Bean
-    FilterRegistrationBean disableAutoRegistration(final TokenAuthenticationFilter filter) {
-        FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+    FilterRegistrationBean<Filter> disableAutoRegistration(final TokenAuthenticationFilter filter) {
+        FilterRegistrationBean<Filter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
         return registration;
     }

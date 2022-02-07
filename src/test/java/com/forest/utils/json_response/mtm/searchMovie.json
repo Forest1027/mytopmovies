@@ -1,0 +1,35 @@
+{
+  "page": 1,
+  "totalResults": 1372,
+  "totalPages": 69,
+  "results": [
+    {
+      "id": 646380,
+      "originalTitle": "Don't Look Up",
+      "title": "Don't Look Up",
+      "originalLanguage": "en",
+      "overview": "Two low-level astronomers must go on a giant media tour to warn humankind of an approaching comet that will destroy planet Earth.",
+      "averageVote": 7.3,
+      "releaseDate": "2021-12-07",
+      "genres": [
+        {
+          "id": 7,
+          "genreName": "Drama",
+          "tmdbId": 18
+        },
+        {
+          "id": 4,
+          "genreName": "Comedy",
+          "tmdbId": 35
+        },
+        {
+          "id": 15,
+          "genreName": "Science Fiction",
+          "tmdbId": 878
+        }
+      ],
+      "tmdbId": 646380,
+      "movieLists": null
+    }
+  ]
+}

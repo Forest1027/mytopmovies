@@ -1,0 +1,313 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1643474811016-1
+      author: forest (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: CONSTRAINT_7
+                  name: ID
+                  type: INT
+              - column:
+                  name: GENRE_NAME
+                  type: VARCHAR(255)
+              - column:
+                  name: TMDB_ID
+                  type: INT
+            tableName: MTM_GENRES
+  - changeSet:
+      id: 1643474811016-2
+      author: forest (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: CONSTRAINT_8
+                  name: ID
+                  type: INT
+              - column:
+                  name: VOTE_AVERAGE
+                  type: DOUBLE PRECISION
+              - column:
+                  name: ORIGINAL_LANGUAGE
+                  type: VARCHAR(10)
+              - column:
+                  name: ORIGINAL_TITLE
+                  type: VARCHAR(50)
+              - column:
+                  name: OVERVIEW
+                  type: CHARACTER LARGE OBJECT
+              - column:
+                  name: RELEASE_DATE
+                  type: TIMESTAMP
+              - column:
+                  name: TITLE
+                  type: VARCHAR(50)
+              - column:
+                  name: TMDB_ID
+                  type: INT
+            tableName: MTM_MOVIES
+  - changeSet:
+      id: 1643474811016-3
+      author: forest (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: MOVIE_ID
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: GENRE_ID
+                  type: INT
+            tableName: MTM_MOVIE_GENRE
+  - changeSet:
+      id: 1643474811016-4
+      author: forest (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: CONSTRAINT_3
+                  name: ID
+                  type: INT
+              - column:
+                  name: DESCRIPTION
+                  type: CHARACTER LARGE OBJECT
+              - column:
+                  name: MOVIE_LIST_NAME
+                  type: VARCHAR(255)
+              - column:
+                  name: USER_ID
+                  type: VARCHAR(255)
+            tableName: MTM_MOVIE_LISTS
+  - changeSet:
+      id: 1643474811016-5
+      author: forest (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: CONSTRAINT_B
+                  name: MOVIE_LIST_ID
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: CONSTRAINT_B
+                  name: MOVIE_ID
+                  type: INT
+            tableName: MTM_MOVIE_MOVIE_LIST
+  - changeSet:
+      id: 1643474811016-7
+      author: forest (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: CONSTRAINT_3E
+                  name: ID
+                  type: VARCHAR(255)
+              - column:
+                  defaultValueBoolean: true
+                  name: ACTIVE
+                  type: BOOLEAN
+              - column:
+                  name: EMAIL
+                  type: VARCHAR(50)
+              - column:
+                  name: PASSWORD
+                  type: VARCHAR(255)
+              - column:
+                  name: USERNAME
+                  type: VARCHAR(15)
+              - column:
+                  defaultValueBoolean: false
+                  name: VERIFIED
+                  type: BOOLEAN
+            tableName: MTM_USERS
+  - changeSet:
+      id: 1643474811016-9
+      author: forest (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: TMDB_ID
+            constraintName: UK_A1GB3G24PD7HGLHRATW1LY8UG
+            tableName: MTM_MOVIES
+  - changeSet:
+      id: 1643474811016-10
+      author: forest (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: USERNAME
+            constraintName: UK_JNJAXDIMXKGJN2OBQFS4R3UXF
+            tableName: MTM_USERS
+  - changeSet:
+      id: 1643474811016-11
+      author: forest (generated)
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: GENRE_ID
+            indexName: FK21W059LTV9YJCKYI392OPDKFR_INDEX_3
+            tableName: MTM_MOVIE_GENRE
+  - changeSet:
+      id: 1643474811016-12
+      author: forest (generated)
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: MOVIE_ID
+            indexName: FKAC8QOIXWQ4FR0TYD292D9EMR1_INDEX_3
+            tableName: MTM_MOVIE_GENRE
+  - changeSet:
+      id: 1643474811016-13
+      author: forest (generated)
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: MOVIE_ID
+            indexName: FKAIVNJRLF4UY2AFHDK14RG9BRP_INDEX_B
+            tableName: MTM_MOVIE_MOVIE_LIST
+  - changeSet:
+      id: 1643474811016-14
+      author: forest (generated)
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: USER_ID
+            indexName: FKMC6WJE9WKKAATUKH4JQNIHO8Y_INDEX_3
+            tableName: MTM_MOVIE_LISTS
+  - changeSet:
+      id: 1643474811016-15
+      author: forest (generated)
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: MOVIE_LIST_ID
+            indexName: FKOONNG6IL4JRQE7TM6X331JNTF_INDEX_B
+            tableName: MTM_MOVIE_MOVIE_LIST
+  - changeSet:
+      id: 1643474811016-17
+      author: forest (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: GENRE_ID
+            baseTableName: MTM_MOVIE_GENRE
+            constraintName: FK21W059LTV9YJCKYI392OPDKFR
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: MTM_GENRES
+            validate: true
+  - changeSet:
+      id: 1643474811016-18
+      author: forest (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: MOVIE_ID
+            baseTableName: MTM_MOVIE_GENRE
+            constraintName: FKAC8QOIXWQ4FR0TYD292D9EMR1
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: MTM_MOVIES
+            validate: true
+  - changeSet:
+      id: 1643474811016-19
+      author: forest (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: MOVIE_ID
+            baseTableName: MTM_MOVIE_MOVIE_LIST
+            constraintName: FKAIVNJRLF4UY2AFHDK14RG9BRP
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: MTM_MOVIES
+            validate: true
+  - changeSet:
+      id: 1643474811016-20
+      author: forest (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: USER_ID
+            baseTableName: MTM_MOVIE_LISTS
+            constraintName: FKMC6WJE9WKKAATUKH4JQNIHO8Y
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: MTM_USERS
+            validate: true
+  - changeSet:
+      id: 1643474811016-21
+      author: forest (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: MOVIE_LIST_ID
+            baseTableName: MTM_MOVIE_MOVIE_LIST
+            constraintName: FKOONNG6IL4JRQE7TM6X331JNTF
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: MTM_MOVIE_LISTS
+            validate: true
+  - changeSet:
+      id: 1642579100999-23
+      author: forest
+      changes:
+        - loadData:
+            columns:
+              - column:
+                  header: id
+                  name: TMDB_ID
+                  type: NUMERIC
+              - column:
+                  header: name
+                  name: GENRE_NAME
+                  type: STRING
+            encoding: UTF-8
+            file: Genres.csv
+            relativeToChangelogFile: true
+            schemaName: public
+            separator: ","
+            tableName: MTM_GENRES
+            usePreparedStatements: true

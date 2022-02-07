@@ -1,0 +1,27 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/nvxrQQspxmSblCYDtvDAbVFX8Jt.jpg",
+      "genre_ids": [
+        18,
+        35,
+        878
+      ],
+      "id": 646380,
+      "original_language": "en",
+      "original_title": "Don't Look Up",
+      "overview": "Two low-level astronomers must go on a giant media tour to warn humankind of an approaching comet that will destroy planet Earth.",
+      "popularity": 1268.861,
+      "poster_path": "/th4E1yqsE8DGpAseLiUrI60Hf8V.jpg",
+      "release_date": "2021-12-07",
+      "title": "Don't Look Up",
+      "video": false,
+      "vote_average": 7.3,
+      "vote_count": 3336
+    }
+  ],
+  "total_pages": 69,
+  "total_results": 1372
+}

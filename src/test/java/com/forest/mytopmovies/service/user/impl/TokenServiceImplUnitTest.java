@@ -1,13 +1,11 @@
 package com.forest.mytopmovies.service.user.impl;
 
 import com.forest.mytopmovies.config.ClockConfiguration;
-import com.forest.mytopmovies.constants.JwtConstants;
+import com.forest.mytopmovies.properties.JwtProperties;
 import com.forest.mytopmovies.service.user.TokenService;
 import com.forest.utils.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
@@ -23,7 +21,7 @@ class TokenServiceImplUnitTest extends UnitTest {
 
     @BeforeEach
     void setUp() {
-        JwtConstants constants = new JwtConstants();
+        JwtProperties constants = new JwtProperties();
         constants.issuer = "Forest";
         constants.clockSkewSec = 120;
         constants.expireSec = 1800;
@@ -38,6 +36,7 @@ class TokenServiceImplUnitTest extends UnitTest {
 
         // when
         String token = underTest.generatePermanentToken(Map.of("username", "forest"));
+
         // then
         assertThat(token).isEqualTo(permanentToken);
     }
@@ -48,6 +47,7 @@ class TokenServiceImplUnitTest extends UnitTest {
 
         // when
         String token = underTest.generateExpiringToken(Map.of("username", "forest"));
+
         // then
         assertThat(token).isEqualTo(expireToken);
     }
@@ -58,6 +58,7 @@ class TokenServiceImplUnitTest extends UnitTest {
 
         // when
         Map<String, String> result = underTest.verifyUntrusted(expireToken);
+
         // then
         assertThat(result).containsEntry("username", "forest").containsEntry("iss", "Forest");
         assertThat(Integer.valueOf(result.get("exp")) - Integer.valueOf(result.get("iat"))).isEqualTo(1800);
@@ -69,6 +70,7 @@ class TokenServiceImplUnitTest extends UnitTest {
 
         // when
         Map<String, String> result = underTest.verify(expireToken);
+
         // then
         assertThat(result).containsEntry("username", "forest").containsEntry("iss", "Forest");
         assertThat(Integer.valueOf(result.get("exp")) - Integer.valueOf(result.get("iat"))).isEqualTo(1800);
