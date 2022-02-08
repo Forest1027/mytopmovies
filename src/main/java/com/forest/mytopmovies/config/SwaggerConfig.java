@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.config.swagger;
+package com.forest.mytopmovies.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

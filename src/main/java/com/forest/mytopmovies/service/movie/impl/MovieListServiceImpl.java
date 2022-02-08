@@ -133,19 +133,19 @@ public class MovieListServiceImpl implements MovieListService {
 
     private Set<Integer> findNewMoviesToBeSaved(List<Integer> movieIds) {
         return movieIds.stream()
-                .filter(id -> !movieRepository.findByTmdbId(id).isPresent())
+                .filter(id -> movieRepository.findByTmdbId(id).isEmpty())
                 .collect(Collectors.toSet());
     }
 
     private void saveUnSavedMovies(List<Integer> movieIds) {
         Set<Integer> moviesToBeSaved = findNewMoviesToBeSaved(movieIds);
         if (!moviesToBeSaved.isEmpty()) {
-            Set<Movie> movieRestrieved = moviesToBeSaved.stream()
+            Set<Movie> movieRetrieved = moviesToBeSaved.stream()
                     .map(this::retrieveMovieById)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
             // save movies to db
-            movieRepository.saveAllAndFlush(movieRestrieved);
+            movieRepository.saveAllAndFlush(movieRetrieved);
         }
     }
 

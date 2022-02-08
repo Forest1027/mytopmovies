@@ -12,6 +12,7 @@ import com.forest.mytopmovies.service.movie.GenreService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
@@ -27,6 +28,7 @@ public class ExternalMovieDBApiUtil {
 
     private final GenreService genreService;
 
+    @Cacheable(value = "movies", key = "#movieName.concat('-').concat(#page)")
     public PageDto<Movie> searchMovies(String movieName, int page) throws TMDBHttpRequestException, JsonProcessingException {
         String uri = tmdbProperties.searchMovieAPI + "?api_key=" + tmdbProperties.tmdbKey + "&page=" + page + "&query=" + UriUtils.encode(movieName, "UTF-8");
         String response = HttpUtil.get(tmdbProperties.baseUrl, uri);
