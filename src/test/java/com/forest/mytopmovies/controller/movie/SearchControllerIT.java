@@ -94,7 +94,7 @@ class SearchControllerIT extends IntegrationTest {
     @Test
     void canSearchMovieByNameWithPassedPage() throws Exception {
         // given
-        String movieName = "Don't look up";
+        String movieName = "Don't look up-update";
         String expectedResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/search.json");
         String expectedResponseMTM = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/mtm/searchMovie.json");
         String uri = "/search/movie";

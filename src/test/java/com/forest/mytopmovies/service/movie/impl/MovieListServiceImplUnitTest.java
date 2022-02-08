@@ -22,8 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -77,7 +77,7 @@ class MovieListServiceImplUnitTest extends UnitTest {
         MovieListPojo movieList = underTest.createMovieList(param, user);
 
         // then
-        verify(movieRepository, times(movieIds.length * 2)).findByTmdbId(anyInt());
+        verify(movieRepository, times(movieIds.length)).findByTmdbId(anyInt());
         verify(movieListRepository).saveAndFlush(any());
         assertThat(movieList.getMovies().get(0).getOriginalTitle()).isEqualTo(movieName);
     }
@@ -98,7 +98,7 @@ class MovieListServiceImplUnitTest extends UnitTest {
         MovieListPojo movieList = underTest.createMovieList(param, user);
 
         // then
-        verify(movieRepository, times(movieIds.length * 2)).findByTmdbId(anyInt());
+        verify(movieRepository, times(movieIds.length)).findByTmdbId(anyInt());
         verify(movieRepository).saveAllAndFlush(any());
         verify(movieListRepository).saveAndFlush(any());
         assertThat(movieList.getMovieListName()).isEqualTo(movieListName);
@@ -135,7 +135,7 @@ class MovieListServiceImplUnitTest extends UnitTest {
 
         // then
         verify(movieListRepository).findByUserIdAndId(anyString(), anyInt());
-        verify(movieRepository, times(movieIds.length * 2)).findByTmdbId(anyInt());
+        verify(movieRepository, times(movieIds.length)).findByTmdbId(anyInt());
         assertThat(result.getMovieListName()).isEqualTo(movieListName);
         assertThat(result.getDescription()).isEqualTo(description);
     }
@@ -145,7 +145,7 @@ class MovieListServiceImplUnitTest extends UnitTest {
         // given
         MovieList mockMovieList = MovieList.builder().movieListName(movieListName).description(description).build();
         Pageable pageable = Pageable.ofSize(5).withPage(0);
-        Page<MovieList> mockPage = new PageImpl<MovieList>(new ArrayList<>(Arrays.asList(new MovieList[]{mockMovieList})), pageable, 0);
+        Page<MovieList> mockPage = new PageImpl<>(Collections.singletonList(mockMovieList), pageable, 0);
         User user = User.builder().username("forest").username("123456").id("test").build();
         when(movieListRepository.findAllByUserIdAndMovieListName(user.getId(), mockMovieList.getMovieListName(), pageable)).thenReturn(mockPage);
 
@@ -173,7 +173,7 @@ class MovieListServiceImplUnitTest extends UnitTest {
         MovieListPojo result = underTest.addMoviesToList(param, user);
 
         // then
-        verify(movieRepository, times(movieIds.length * 2)).findByTmdbId(anyInt());
+        verify(movieRepository, times(movieIds.length)).findByTmdbId(anyInt());
         verify(movieListRepository).findById(mockMovieList.getId());
         verify(movieListRepository).findByUserIdAndId(user.getId(), mockMovieList.getId());
     }
