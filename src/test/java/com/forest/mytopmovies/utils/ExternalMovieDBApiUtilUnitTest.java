@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ExternalMovieDBApiUtilUnitTest extends UnitTest {
 
@@ -64,6 +64,7 @@ class ExternalMovieDBApiUtilUnitTest extends UnitTest {
             assertThat(result.getAverageVote()).isEqualTo(expectedVoteAvg);
             assertThat(result.getOriginalTitle()).isEqualTo(expectedOriginalTitle);
             assertThat(result.getReleaseDate()).isEqualTo(expectedReleaseDate);
+            verify(cacheManager).getCache("movies");
         }
     }
 
@@ -87,6 +88,7 @@ class ExternalMovieDBApiUtilUnitTest extends UnitTest {
             assertThat(result.getAverageVote()).isEqualTo(expectedVoteAvg);
             assertThat(result.getOriginalTitle()).isEqualTo(expectedOriginalTitle);
             assertThat(dateFormat.format(result.getReleaseDate())).isEqualTo(expectedReleaseDate);
+            verify(cacheManager, times(2)).getCache("movies");
         }
 
     }
