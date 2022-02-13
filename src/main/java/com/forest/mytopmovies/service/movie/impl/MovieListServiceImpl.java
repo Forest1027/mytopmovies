@@ -16,6 +16,8 @@ import com.forest.mytopmovies.service.movie.MovieListService;
 import com.forest.mytopmovies.utils.ExternalMovieDBApiUtil;
 import com.forest.mytopmovies.utils.PojoEntityParamDtoConverter;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,16 +47,11 @@ public class MovieListServiceImpl implements MovieListService {
 
     @Override
     public MovieListPojo createMovieList(MovieListParam movieListParam, User user) {
-        saveUnSavedMovies(movieListParam.movies());
-        Set<Movie> movies = movieListParam.movies().stream()
-                .map(movieRepository::findByTmdbId)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+        Set<Movie> savedMovies = saveUnSavedMovies(movieListParam.movies());
         // save movie list to db
         MovieList movieList = PojoEntityParamDtoConverter.convertMovieListParamToEntity(movieListParam);
         movieList.setUser(user);
-        movieList.setMovies(movies);
+        movieList.setMovies(savedMovies);
         movieListRepository.saveAndFlush(movieList);
         return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList);
     }
@@ -71,13 +69,7 @@ public class MovieListServiceImpl implements MovieListService {
         // retrieve movie list
         return movieListRepository.findByUserIdAndId(user.getId(), movieListParam.id())
                 .map(movieList -> {
-                    saveUnSavedMovies(movieListParam.movies());
-                    Set<Movie> movies = movieListParam.movies().stream()
-                            .map(movieRepository::findByTmdbId)
-                            .filter(Optional::isPresent)
-                            .map(Optional::get)
-                            .collect(Collectors.toSet());
-                    movieList.setMovies(movies);
+                    movieList.setMovies(saveUnSavedMovies(movieListParam.movies()));
                     movieList.setDescription(movieListParam.description());
                     movieList.setMovieListName(movieListParam.movieListName());
                     return PojoEntityParamDtoConverter.convertMovieListEntityToPojo(movieList);
@@ -103,11 +95,7 @@ public class MovieListServiceImpl implements MovieListService {
     public MovieListPojo addMoviesToList(MovieListMovieUpdateParam movieListParam, User user) {
         return movieListRepository.findById(movieListParam.id())
                 .map(movieList -> {
-                    saveUnSavedMovies(movieListParam.movies());
-                    Set<Movie> movies = movieListParam.movies().stream()
-                            .map(id -> movieRepository.findByTmdbId(id).get())
-                            .collect(Collectors.toSet());
-                    for (Movie movie : movies) {
+                    for (Movie movie : saveUnSavedMovies(movieListParam.movies())) {
                         movieList.getMovies().add(movie);
                     }
                     return getMovieListsByUserAndId(movieListParam.id(), user);
@@ -131,22 +119,31 @@ public class MovieListServiceImpl implements MovieListService {
         return null;
     }
 
-    private Set<Integer> findNewMoviesToBeSaved(List<Integer> movieIds) {
-        return movieIds.stream()
-                .filter(id -> !movieRepository.findByTmdbId(id).isPresent())
-                .collect(Collectors.toSet());
+    private Pair<Set<Movie>, Set<Integer>> findNewMoviesToBeSaved(List<Integer> movieIds) {
+        Set<Movie> moviesSaved = new HashSet<>();
+        Set<Integer> movieTeBeSaved = new HashSet<>();
+        for (int id : movieIds) {
+            Optional<Movie> movieOptional = movieRepository.findByTmdbId(id);
+            if (movieOptional.isPresent()) moviesSaved.add(movieOptional.get());
+            else movieTeBeSaved.add(id);
+        }
+        return new MutablePair<>(moviesSaved, movieTeBeSaved);
     }
 
-    private void saveUnSavedMovies(List<Integer> movieIds) {
-        Set<Integer> moviesToBeSaved = findNewMoviesToBeSaved(movieIds);
+    private Set<Movie> saveUnSavedMovies(List<Integer> movieIds) {
+        Pair<Set<Movie>, Set<Integer>> moviesPair = findNewMoviesToBeSaved(movieIds);
+        Set<Movie> moviesSaved = moviesPair.getLeft();
+        Set<Integer> moviesToBeSaved = moviesPair.getRight();
         if (!moviesToBeSaved.isEmpty()) {
-            Set<Movie> movieRestrieved = moviesToBeSaved.stream()
+            Set<Movie> movieRetrieved = moviesToBeSaved.stream()
                     .map(this::retrieveMovieById)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
             // save movies to db
-            movieRepository.saveAllAndFlush(movieRestrieved);
+            List<Movie> movies = movieRepository.saveAllAndFlush(movieRetrieved);
+            moviesSaved.addAll(movies);
         }
+        return moviesSaved;
     }
 
 }

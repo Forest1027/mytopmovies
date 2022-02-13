@@ -41,7 +41,7 @@ public class PojoEntityParamDtoConverter {
     public static Movie convertMovieDtoToEntity(MovieDto movieDto, GenreService genreService) {
         List<Genre> genres;
         if (movieDto.getGenres() != null && !movieDto.getGenres().isEmpty()) {
-            genres = movieDto.getGenres().stream().map(PojoEntityParamDtoConverter::convertGenreDtoToEntity).toList();
+            genres = genreService.saveAllGenres(movieDto.getGenres().stream().map(PojoEntityParamDtoConverter::convertGenreDtoToEntity).toList());
         } else {
             genres = getGenreList(movieDto.getGenre_ids(), genreService);
         }

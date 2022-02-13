@@ -6,6 +6,7 @@ import com.forest.mytopmovies.service.movie.GenreService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,5 +17,10 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public Optional<Genre> findGenreByTMDBId(int id) {
         return repository.findOneByTmdbId(id);
+    }
+
+    @Override
+    public List<Genre> saveAllGenres(List<Genre> genres) {
+        return repository.saveAllAndFlush(genres);
     }
 }

@@ -21,7 +21,6 @@ import java.util.function.Supplier;
 
 @Service
 public class TokenServiceImpl implements Clock, TokenService {
-    private static final String DOT = ".";
     private static final GzipCompressionCodec COMPRESSION_CODEC = new GzipCompressionCodec();
 
     private final JwtProperties constants;
@@ -34,20 +33,8 @@ public class TokenServiceImpl implements Clock, TokenService {
     }
 
     @Override
-    public String generatePermanentToken(Map<String, String> attributes) {
-        return newToken(attributes, 0);
-    }
-
-    @Override
     public String generateExpiringToken(Map<String, String> attributes) {
         return newToken(attributes, constants.expireSec);
-    }
-
-    @Override
-    public Map<String, String> verifyUntrusted(String token) {
-        JwtParser parser = jwtParser();
-        String withoutSignature = token.substring(0, token.lastIndexOf(DOT)) + DOT;
-        return parseClaims(() -> parser.parseClaimsJwt(withoutSignature).getBody());
     }
 
     @Override

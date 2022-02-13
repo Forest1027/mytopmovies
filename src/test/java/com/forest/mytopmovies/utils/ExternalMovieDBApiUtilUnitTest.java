@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -19,6 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 class ExternalMovieDBApiUtilUnitTest extends UnitTest {
 
@@ -29,12 +32,15 @@ class ExternalMovieDBApiUtilUnitTest extends UnitTest {
     @Mock
     private GenreService genreService;
 
+    @Mock
+    private CacheManager cacheManager;
+
     @BeforeEach
     void setUp() {
         tmdbProperties = new TMDBProperties();
         tmdbProperties.baseUrl = "http://localhost:9999";
         tmdbProperties.searchMovieAPI = "/search/movie";
-        underTest = new ExternalMovieDBApiUtil(tmdbProperties, genreService);
+        underTest = new ExternalMovieDBApiUtil(tmdbProperties, genreService, cacheManager);
     }
 
     @Test
@@ -45,6 +51,7 @@ class ExternalMovieDBApiUtilUnitTest extends UnitTest {
         String expectedOriginalTitle = "Don't Look Up";
         String date = "2021-12-07";
         Date expectedReleaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        when(cacheManager.getCache(anyString())).thenReturn((new CaffeineCacheManager()).getCache("movies"));
 
         try (MockedStatic<HttpUtil> utilities = Mockito.mockStatic(HttpUtil.class)) {
             utilities.when(() -> HttpUtil.get(anyString(), anyString())).thenReturn(expectedResponse);
@@ -57,6 +64,7 @@ class ExternalMovieDBApiUtilUnitTest extends UnitTest {
             assertThat(result.getAverageVote()).isEqualTo(expectedVoteAvg);
             assertThat(result.getOriginalTitle()).isEqualTo(expectedOriginalTitle);
             assertThat(result.getReleaseDate()).isEqualTo(expectedReleaseDate);
+            verify(cacheManager).getCache("movies");
         }
     }
 
@@ -68,17 +76,19 @@ class ExternalMovieDBApiUtilUnitTest extends UnitTest {
         String expectedOriginalTitle = "Fight Club";
         String expectedReleaseDate = "1999-10-15";
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        when(cacheManager.getCache(anyString())).thenReturn((new CaffeineCacheManager()).getCache("movies"));
 
         try (MockedStatic<HttpUtil> utilities = Mockito.mockStatic(HttpUtil.class)) {
             utilities.when(() -> HttpUtil.get(anyString(), anyString())).thenReturn(expectedResponse);
 
             // when
-            Movie result = underTest.searchMovieById(eq(anyInt()));
+            Movie result = underTest.searchMovieById(550);
 
             // then
             assertThat(result.getAverageVote()).isEqualTo(expectedVoteAvg);
             assertThat(result.getOriginalTitle()).isEqualTo(expectedOriginalTitle);
             assertThat(dateFormat.format(result.getReleaseDate())).isEqualTo(expectedReleaseDate);
+            verify(cacheManager, times(2)).getCache("movies");
         }
 
     }

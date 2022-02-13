@@ -52,8 +52,7 @@ public class Movie {
     private Date releaseDate;
 
     @ManyToMany(fetch = FetchType.EAGER,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE
-                    , CascadeType.DETACH, CascadeType.REFRESH})
+            cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "mtm_movie_genre",
             joinColumns = @JoinColumn(name = "movie_id", referencedColumnName = "id"),

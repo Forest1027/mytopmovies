@@ -24,4 +24,9 @@ run unit tests: `./mvnw clean test`
 
 runt integration tests: `./mvnw clean integration-test`
 
-If it's in windows, please use mvnw.cmd
+If it's in windows, please use mvnw.cmd.
+
+This project is integrated with SonarQube. To get the information on test report, install docker engine and docker compose, then run the command below to start SonarQube server:
+`docker-compose -f docker-compose.yml up`.
+
+After the SonarQube server has successfully started, run the command to execute test and generate report: `./mvnw clean verify sonar:sonar`.
