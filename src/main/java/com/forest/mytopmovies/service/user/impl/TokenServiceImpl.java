@@ -1,6 +1,5 @@
 package com.forest.mytopmovies.service.user.impl;
 
-import com.forest.mytopmovies.exceptions.TokenExpiredException;
 import com.forest.mytopmovies.properties.JwtProperties;
 import com.forest.mytopmovies.service.user.TokenService;
 import com.forest.mytopmovies.utils.LambdaExceptionWrappers;
@@ -38,7 +37,7 @@ public class TokenServiceImpl implements Clock, TokenService {
     }
 
     @Override
-    public Map<String, String> verify(String token) throws TokenExpiredException {
+    public Map<String, String> verify(String token) {
         JwtParser parser = jwtParser().setSigningKey(constants.secretKey);
         return parseClaims(LambdaExceptionWrappers.supplierWrapper(() -> parser.parseClaimsJws(token).getBody(), ExpiredJwtException.class));
     }
@@ -66,8 +65,7 @@ public class TokenServiceImpl implements Clock, TokenService {
 
     private Map<String, String> parseClaims(Supplier<Claims> toClaims) {
         return Optional.ofNullable(toClaims.get())
-                .map(this::convertClaimsToMap)
-                .orElseThrow(TokenExpiredException::new);
+                .map(this::convertClaimsToMap).orElseGet(HashMap::new);
     }
 
     private Map<String, String> convertClaimsToMap(Claims claims) {
