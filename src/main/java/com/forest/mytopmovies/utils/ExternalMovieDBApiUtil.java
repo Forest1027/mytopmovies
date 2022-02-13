@@ -17,11 +17,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @AllArgsConstructor
 public class ExternalMovieDBApiUtil {
-    private static final String cacheName = "movies";
+    private static final String CACHE_NAME = "movies";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalMovieDBApiUtil.class);
 
@@ -42,7 +43,7 @@ public class ExternalMovieDBApiUtil {
         // store to cache
         convertedMovies.forEach(movie -> {
             LOGGER.debug("Saving movie with id {} to cache.", movie.getTmdbId());
-            cacheManager.getCache(cacheName).put(movie.getTmdbId(), movie);
+            Objects.requireNonNull(cacheManager).getCache(CACHE_NAME).put(movie.getTmdbId(), movie);
         });
 
         return PageDto.<Movie>builder().page(queryResult.getPage())
@@ -52,9 +53,9 @@ public class ExternalMovieDBApiUtil {
 
     public Movie searchMovieById(int movieId) throws TMDBHttpRequestException, JsonProcessingException {
         // check cache first
-        if (cacheManager.getCache(cacheName) != null && cacheManager.getCache(cacheName).get(movieId) != null) {
+        if (Objects.requireNonNull(cacheManager).getCache(CACHE_NAME) != null && cacheManager.getCache(CACHE_NAME).get(movieId) != null) {
             LOGGER.debug("Retrieving movie with id {} from cache.", movieId);
-            return (Movie) cacheManager.getCache(cacheName).get(movieId).get();
+            return (Movie) cacheManager.getCache(CACHE_NAME).get(movieId).get();
         }
         LOGGER.debug("Cache not hit for movie with id {}.", movieId);
         String uri = tmdbProperties.searchMovieByIdAPI + "/" + movieId + "?api_key=" + tmdbProperties.tmdbKey;
