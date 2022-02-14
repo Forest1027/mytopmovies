@@ -11,8 +11,8 @@ import java.io.IOException;
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        httpServletResponse.setContentType("application/json");
+        httpServletResponse.setContentType("application/text");
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        httpServletResponse.getOutputStream().println("{ \"error\": \"" + e.getMessage() + "\" }");
+        httpServletResponse.getOutputStream().println(e.getMessage());
     }
 }
