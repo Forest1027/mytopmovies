@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,6 +37,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> tmdbExceptionHandler(TMDBHttpRequestException ex) {
         LOGGER.error("TMDB request error: {}", ex.getMessage());
         return new ResponseEntity<>("Failure when execute request to TMDB API", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ResponseEntity<String> accessDeniedHandler(AccessDeniedException ex) {
+        LOGGER.error("Access denied error: {}", ex.getMessage());
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)

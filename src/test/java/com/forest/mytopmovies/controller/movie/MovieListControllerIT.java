@@ -28,6 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Action.ok;
@@ -256,6 +259,70 @@ class MovieListControllerIT extends IntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("Movie list with id " + passedId + " is not found.")))
                 .andReturn();
+    }
+
+    @Test
+    @Order(7)
+    void cantGetMovieListByIdWithoutToken() throws Exception {
+        // given
+        ObjectMapper mapper = new ObjectMapper();
+        String token = registerUser(mapper, "forest3", "123456");
+
+        String expectedTMDBResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/searchMovieById.json");
+
+        whenHttp(server)
+                .match(Condition.endsWithUri("/movie/550"), Condition.parameter("api_key", "test-key"))
+                .then(ok(), stringContent(expectedTMDBResponse));
+
+        String movieListResponse = createMovieList(mapper, baseMovieListName, baseDescription, baseMovieIds, token);
+        MovieListPojo movieListPojo = mapper.readValue(movieListResponse, MovieListPojo.class);
+
+        // when
+        MvcResult result = this.mockMvc.perform(get("/api/v1/movielist/" + movieListPojo.getId()))
+                .andDo(print())
+                .andExpect(status().isUnauthorized()).andReturn();
+
+        // then
+        assertThat(result.getResponse().getContentAsString()).contains("Missing authentication token");
+    }
+
+    @Test
+    @Order(8)
+    void cantGetMovieListByIdWithExpiredToken() throws Exception {
+        // given
+        ObjectMapper mapper = new ObjectMapper();
+        String token = registerUser(mapper, "forest3", "123456");
+
+        String expectedTMDBResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/searchMovieById.json");
+
+        whenHttp(server)
+                .match(Condition.endsWithUri("/movie/550"), Condition.parameter("api_key", "test-key"))
+                .then(ok(), stringContent(expectedTMDBResponse));
+
+        String movieListResponse = createMovieList(mapper, baseMovieListName, baseDescription, baseMovieIds, token);
+        MovieListPojo movieListPojo = mapper.readValue(movieListResponse, MovieListPojo.class);
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+        // when
+
+        // then
+        executorService.schedule(() -> {
+            try {
+                assertRequestWithExpiredToken(movieListPojo, token);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 25, TimeUnit.SECONDS);
+        executorService.shutdown();
+        executorService.awaitTermination(26, TimeUnit.SECONDS);
+    }
+
+    private void assertRequestWithExpiredToken(MovieListPojo movieListPojo, String token) throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/api/v1/movielist/" + movieListPojo.getId())
+                        .header("Authorization", String.format("Bearer %s", token)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized()).andReturn();
+        assertThat(result.getResponse().getContentAsString()).contains("JWT expired");
     }
 
     private static User defaultUser(String username, String password) {

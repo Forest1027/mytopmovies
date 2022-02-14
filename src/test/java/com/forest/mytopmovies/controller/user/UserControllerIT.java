@@ -66,6 +66,24 @@ class UserControllerIT extends IntegrationTest {
                 .andExpect(content().string(containsString("Please use a different username to register.")))
                 .andReturn();
     }
+    
+    @Test
+    void cantLogin() throws Exception {
+        // given
+        User user = defaultUser("forest3");
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(user);
+
+        // when
+        MvcResult result = this.mockMvc.perform(post("/api/v1/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andDo(print())
+                .andExpect(status().isUnauthorized()).andReturn();
+
+        // then
+        assertThat(result.getResponse().getContentAsString()).contains("Invalid login and/or password");
+    }
 
     private static User defaultUser(String username) {
         return User.builder()

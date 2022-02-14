@@ -8,8 +8,12 @@ import com.forest.mytopmovies.service.user.UserCrudService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -41,6 +45,6 @@ public class UserController {
     public ResponseEntity<String> login(@Valid @RequestBody UserLoginParam user) {
         return authService.login(user.username(), user.password())
                 .map(token -> new ResponseEntity<>(token, HttpStatus.OK))
-                .orElseThrow(() -> new RuntimeException("Invalid login and/or password"));
+                .orElseThrow(() -> new AccessDeniedException("Invalid login and/or password"));
     }
 }
