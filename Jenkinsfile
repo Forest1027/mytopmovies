@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        docker { image 'amazoncorretto:17' }
-    }
+    agent any
     environment {
         PROFILE = "${BRANCH_NAME==main?prod:dev}"
     }
