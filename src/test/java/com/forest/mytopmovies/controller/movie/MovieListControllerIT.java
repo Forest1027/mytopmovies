@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -46,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 class MovieListControllerIT extends IntegrationTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovieListControllerIT.class);
 
     private static String password = "123456";
 
@@ -306,6 +309,7 @@ class MovieListControllerIT extends IntegrationTest {
         // when
 
         // then
+        LOGGER.info("Waiting for 25 seconds for assertion.");
         executorService.schedule(() -> {
             try {
                 assertRequestWithExpiredToken(movieListPojo, token);
