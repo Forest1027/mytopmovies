@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.token;
+package com.forest.mytopmovies.config.security.token;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;

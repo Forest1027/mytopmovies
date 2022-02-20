@@ -1,7 +1,7 @@
 package com.forest.mytopmovies.config.security;
 
-import com.forest.mytopmovies.token.TokenAuthenticationFilter;
-import com.forest.mytopmovies.token.TokenAuthenticationProvider;
+import com.forest.mytopmovies.config.security.token.TokenAuthenticationFilter;
+import com.forest.mytopmovies.config.security.token.TokenAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

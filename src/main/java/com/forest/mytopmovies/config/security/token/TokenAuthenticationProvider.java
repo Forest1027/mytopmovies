@@ -1,4 +1,4 @@
-package com.forest.mytopmovies.token;
+package com.forest.mytopmovies.config.security.token;
 
 import com.forest.mytopmovies.service.user.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
