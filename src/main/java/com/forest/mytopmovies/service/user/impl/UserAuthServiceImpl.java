@@ -33,7 +33,8 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public Optional<User> findByToken(String token) {
-        return Optional.of(tokenService.verify(token))
+        Map<String, String> verifyMap = tokenService.verify(token);
+        return Optional.of(verifyMap)
                 .map(map -> map.get("username"))
                 .flatMap(userCrudService::findOneByUsername);
     }

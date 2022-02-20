@@ -1,12 +1,9 @@
 package com.forest.mytopmovies.service.user.impl;
 
-import com.forest.mytopmovies.exceptions.TokenExpiredException;
 import com.forest.mytopmovies.properties.JwtProperties;
 import com.forest.mytopmovies.service.user.TokenService;
-import com.forest.mytopmovies.utils.LambdaExceptionWrappers;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Clock;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,8 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 @Service
 public class TokenServiceImpl implements Clock, TokenService {
@@ -38,9 +33,9 @@ public class TokenServiceImpl implements Clock, TokenService {
     }
 
     @Override
-    public Map<String, String> verify(String token) throws TokenExpiredException {
+    public Map<String, String> verify(String token) {
         JwtParser parser = jwtParser().setSigningKey(constants.secretKey);
-        return parseClaims(LambdaExceptionWrappers.supplierWrapper(() -> parser.parseClaimsJws(token).getBody(), ExpiredJwtException.class));
+        return parseClaims(parser, token);
     }
 
     private String newToken(Map<String, String> attributes, int expireInSec) {
@@ -64,10 +59,9 @@ public class TokenServiceImpl implements Clock, TokenService {
         return claims;
     }
 
-    private Map<String, String> parseClaims(Supplier<Claims> toClaims) {
-        return Optional.ofNullable(toClaims.get())
-                .map(this::convertClaimsToMap)
-                .orElseThrow(TokenExpiredException::new);
+    private Map<String, String> parseClaims(JwtParser parser, String token) {
+        Claims claims = parser.parseClaimsJws(token).getBody();
+        return Map.copyOf(convertClaimsToMap(claims));
     }
 
     private Map<String, String> convertClaimsToMap(Claims claims) {

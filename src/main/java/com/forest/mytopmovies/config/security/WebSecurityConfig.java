@@ -1,7 +1,7 @@
 package com.forest.mytopmovies.config.security;
 
-import com.forest.mytopmovies.token.TokenAuthenticationFilter;
-import com.forest.mytopmovies.token.TokenAuthenticationProvider;
+import com.forest.mytopmovies.config.security.token.TokenAuthenticationFilter;
+import com.forest.mytopmovies.config.security.token.TokenAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -57,19 +58,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling()
-                .defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS)
-                .and()
                 .authenticationProvider(provider)
                 .addFilterBefore(restAuthFilter(), AnonymousAuthenticationFilter.class)
                 .authorizeRequests()
                 .requestMatchers(PROTECTED_URLS)
                 .authenticated()
                 .and()
+                .exceptionHandling()
+                .defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS)
+                .and()
                 .csrf().disable()
-                .formLogin().disable()
-                .httpBasic().disable()
-                .logout().disable();
+                .formLogin().disable();
     }
 
     @Bean
@@ -77,6 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         TokenAuthenticationFilter filter = new TokenAuthenticationFilter(PROTECTED_URLS);
         filter.setAuthenticationManager(authenticationManager());
         filter.setAuthenticationSuccessHandler(successHandler());
+        filter.setAuthenticationFailureHandler(failureHandler());
         return filter;
     }
 
@@ -85,6 +85,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         SimpleUrlAuthenticationSuccessHandler successHandler = new SimpleUrlAuthenticationSuccessHandler();
         successHandler.setRedirectStrategy(new NoRedirectStrategy());
         return successHandler;
+    }
+
+    @Bean
+    AuthenticationFailureHandler failureHandler() {
+        return new CustomAuthenticationFailureHandler();
     }
 
     @Bean

@@ -1,8 +1,8 @@
 constants:
   jwt:
     issuer: Forest
-    expireSec: 1800
-    clockSkewSec: 120
+    expireSec: 20
+    clockSkewSec: 0
     secretKey: test-key
   tmdb:
     baseUrl: http://localhost:9999

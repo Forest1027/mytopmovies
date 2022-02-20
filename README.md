@@ -15,7 +15,7 @@ java -jar -Dspring.profiles.active=local -Djwt_key=test target/mytopmovies-0.0.1
 
 # Access API
 
- After running the project, visit http://localhost:8080/swagger-ui.html for the Rest APIs.
+After running the project, visit http://localhost:8080/swagger-ui.html for the Rest APIs.
 
 You can visit http://localhost:8080/h2-console/ to access the database.
 
@@ -27,6 +27,6 @@ runt integration tests: `./mvnw clean integration-test`
 If it's in windows, please use mvnw.cmd.
 
 This project is integrated with SonarQube. To get the information on test report, install docker engine and docker compose, then run the command below to start SonarQube server:
-`docker-compose -f docker-compose.yml up`.
+`docker compose up`.
 
 After the SonarQube server has successfully started, run the command to execute test and generate report: `./mvnw clean verify sonar:sonar`.
