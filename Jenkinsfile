@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'openjdk:17' }
+    }
     environment {
         PROFILE = "${BRANCH_NAME==main?prod:dev}"
     }
