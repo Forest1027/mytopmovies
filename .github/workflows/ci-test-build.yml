@@ -23,5 +23,6 @@ jobs:
       run: mvn clean test
     - name: Integration Test
       run: mvn clean verify
-  call-workflow-dockerize:
-    uses: ./.github/workflows/ci-dockerize.yml
+    - name: Dockerize
+      call-workflow-dockerize:
+      uses: ./.github/workflows/ci-dockerize.yml
