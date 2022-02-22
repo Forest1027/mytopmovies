@@ -1,4 +1,4 @@
-name: Java CI Test and Build with Maven
+name: Java CI Test with Maven
 
 on:
   push:
@@ -23,5 +23,3 @@ jobs:
       run: mvn clean test
     - name: Integration Test
       run: mvn clean verify
-    - name: Build
-      run: mvn clean package
