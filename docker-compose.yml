@@ -10,7 +10,7 @@ services:
   database:
     image: postgres
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - /opt/postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: MTM
       POSTGRES_USER: postgres
