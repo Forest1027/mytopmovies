@@ -31,7 +31,6 @@ jobs:
         uses: docker/metadata-action@v1
         with:
           images: forest1027/mtm
-
       - name: Build and push Docker image
         if: !contains($GITHUB_REF_NAME, "main")
         uses: docker/build-push-action@v2
