@@ -39,6 +39,8 @@ jobs:
           push: true
           tags: dev-latest
           labels: ${{ steps.meta.outputs.labels }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
         env:
           profile: ${{ secrets.PROFILE }}
           db_username: ${{ secrets.DB_USERNAME }}
