@@ -31,6 +31,16 @@ jobs:
         uses: docker/metadata-action@v1
         with:
           images: forest1027/mtm
+      - name: Set env to staging
+        run: |
+            echo "::set-env name=ENVIRONMENT::staging"
+      - name: Set env to production
+        if: endsWith(github.ref, '/master')
+        run: |
+          echo "::set-env name=ENVIRONMENT::production"
+
+      - name: test
+        run: echo "$ENVIRONMENT"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
