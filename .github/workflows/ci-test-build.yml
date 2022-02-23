@@ -25,5 +25,5 @@ jobs:
         run: mvn clean verify
 
   call-workflow-dockerize:
-    needs: build
+    needs: run_tests
     uses: ./.github/workflows/ci-dockerize.yml
