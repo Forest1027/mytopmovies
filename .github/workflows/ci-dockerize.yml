@@ -31,18 +31,9 @@ jobs:
         uses: docker/metadata-action@v1
         with:
           images: forest1027/mtm
-      - name: Set env to staging
-        run: |
-            echo "::set-env name=ENVIRONMENT::staging"
-      - name: Set env to production
-        if: endsWith(github.ref, '/master')
-        run: |
-          echo "::set-env name=ENVIRONMENT::production"
-
-      - name: test
-        run: echo "$ENVIRONMENT"
 
       - name: Build and push Docker image
+        if: !contains($GITHUB_REF_NAME, "main")
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -50,8 +41,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
         env:
-          profile: ${{ secrets.PROFILE }}
-          db_username: ${{ secrets.DB_USERNAME }}
-          db_password: ${{ secrets.DB_PASSWORD }}
+          profile: dev
+          db_username: ${{ secrets.DB_USERNAME_DEV }}
+          db_password: ${{ secrets.DB_PASSWORD_DEV }}
           jwt_key: ${{ secrets.JWT_KEY }}
           tmdb_key: ${{ secrets.TMDB_KEY }}
