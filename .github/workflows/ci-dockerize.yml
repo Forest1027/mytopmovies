@@ -37,7 +37,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ dev-latest }}
+          tags: dev-latest
           labels: ${{ steps.meta.outputs.labels }}
         env:
           profile: ${{ secrets.PROFILE }}
