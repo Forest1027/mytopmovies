@@ -2,9 +2,8 @@ name: Java CI Test with Maven
 
 on:
   push:
-    branches: [ feature/MTM-26-deployment ]
   pull_request:
-    branches: [ feature/MTM-26-deployment ]
+  workflow_dispatch:
 
 jobs:
   run_tests:
@@ -24,6 +23,7 @@ jobs:
       - name: Integration Test
         run: mvn clean verify
 
-#  call-workflow-dockerize:
-#    needs: run_tests
-#    uses: ./.github/workflows/ci-dockerize.yml
+  call-workflow-dockerize:
+    if: contains(github.ref, 'main') || contains(github.ref, 'develop')
+    needs: run_tests
+    uses: ./.github/workflows/ci-dockerize.yml
