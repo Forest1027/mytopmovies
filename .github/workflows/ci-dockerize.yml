@@ -39,12 +39,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args:
-            profile=${{ env.profile }}
-            db_username=${{ env.db_username }}
-            db_password=${{ env.db_password }}
-            jwt_key=${{ env.jwt_key }}
-            tmdb_key=${{ env.tmdb_key }}
+          build-args: "[ profile=${ { env.profile } },db_username=${ { env.db_username } },db_password=${ { env.db_password } },jwt_key=${ { env.jwt_key } },tmdb_key=${ { env.tmdb_key } } ]"
         env:
           profile: dev
           db_username: ${{ secrets.DB_USERNAME_DEV }}
