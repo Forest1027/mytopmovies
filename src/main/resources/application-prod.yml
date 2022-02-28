@@ -5,7 +5,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
   datasource:
-    url: "jdbc:postgresql://localhost:5432/MTM"
+    url: "jdbc:postgresql://mtm-prod.cluster-ccfxnmturmw6.eu-west-1.rds.amazonaws.com:5432/MTM"
     username: ${db_username}
     password: ${db_password}
   liquibase:
