@@ -1,0 +1,29 @@
+name: Java CI Test with Maven
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  run_tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Unit Test
+        run: mvn clean test
+      - name: Integration Test
+        run: mvn clean verify
+
+  call-workflow-dockerize:
+    if: contains(github.ref, 'main') || contains(github.ref, 'develop')
+    needs: run_tests
+    uses: ./.github/workflows/ci-dockerize.yml

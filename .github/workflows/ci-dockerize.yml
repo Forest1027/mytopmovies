@@ -1,0 +1,54 @@
+name: Build and Publish Docker Image
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build
+        run: mvn clean package
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1.13.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v1
+        with:
+          images: forest1027/mtm
+      - name: Build and push Docker image
+        if: "!contains(github.ref, 'main')"
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            profile=${{ env.profile }}
+            db_username=${{ env.db_username }}
+            db_password=${{ env.db_password }}
+            jwt_key=${{ env.jwt_key }}
+            tmdb_key=${{ env.tmdb_key }}
+        env:
+          profile: dev
+          db_username: ${{ secrets.DB_USERNAME_DEV }}
+          db_password: ${{ secrets.DB_PASSWORD_DEV }}
+          jwt_key: ${{ secrets.JWT_KEY }}
+          tmdb_key: ${{ secrets.TMDB_KEY }}

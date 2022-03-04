@@ -45,7 +45,7 @@ databaseChangeLog:
                   type: VARCHAR(50)
               - column:
                   name: OVERVIEW
-                  type: CHARACTER LARGE OBJECT
+                  type: TEXT
               - column:
                   name: RELEASE_DATE
                   type: TIMESTAMP
@@ -89,7 +89,7 @@ databaseChangeLog:
                   type: INT
               - column:
                   name: DESCRIPTION
-                  type: CHARACTER LARGE OBJECT
+                  type: TEXT
               - column:
                   name: MOVIE_LIST_NAME
                   type: VARCHAR(255)
