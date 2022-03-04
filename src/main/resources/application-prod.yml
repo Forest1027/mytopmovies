@@ -5,11 +5,13 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
   datasource:
-    url: "jdbc:postgresql://mtm-prod.cluster-ccfxnmturmw6.eu-west-1.rds.amazonaws.com:5432/MTM"
+    url: "jdbc:postgresql://mtm-db.ccfxnmturmw6.eu-west-1.rds.amazonaws.com:5432/MTM"
     username: ${db_username}
     password: ${db_password}
   liquibase:
     change-log: classpath:db/liquibase-changelog.yml
+server:
+  port: 80
 constants:
   jwt:
     issuer: Forest

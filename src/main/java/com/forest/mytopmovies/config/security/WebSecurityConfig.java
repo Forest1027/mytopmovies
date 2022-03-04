@@ -29,6 +29,7 @@ import javax.servlet.Filter;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(
+            new AntPathRequestMatcher("/"),
             new AntPathRequestMatcher("/api/v1/users/**"),
             new AntPathRequestMatcher("/api/v1/search/movies"),
             new AntPathRequestMatcher("/v3/api-docs/**"),
