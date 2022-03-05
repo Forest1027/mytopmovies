@@ -32,6 +32,11 @@ jobs:
       - name: Build package
         run: mvn clean package
 
+      - name: Get version
+        run: |
+          export VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "::set-env name=VERSION::$VERSION"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1.6.1
         with:
@@ -47,7 +52,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ steps.meta.outputs.labels }}
+          IMAGE_TAG: ${{ env.VERSION }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can
