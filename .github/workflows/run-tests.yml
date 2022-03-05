@@ -1,4 +1,4 @@
-name: Java CI Test with Maven
+name: Run Tests with Maven
 
 on:
   push:
@@ -26,4 +26,4 @@ jobs:
   deploy_to_aws:
     if: contains(github.ref, 'main') || contains(github.ref, 'develop') || contains(github.ref, 'feature')
     needs: run_tests
-    uses: ./.github/workflows/cd-amazon-ecs.yml
+    uses: ./.github/workflows/build-push-to-amazon-ecr.yml
