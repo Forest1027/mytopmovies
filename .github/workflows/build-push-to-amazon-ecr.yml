@@ -32,6 +32,12 @@ jobs:
       - name: Build package
         run: mvn clean package
 
+      - name: Get version
+        run: |
+          export VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "::set-output name=version::$VERSION"
+        id: get_version
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1.6.1
         with:
@@ -42,12 +48,6 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
-
-      - name: Get version
-        run: |
-          export VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "::set-output name=version::$VERSION"
-        id: get_version
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
