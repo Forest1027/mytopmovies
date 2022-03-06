@@ -1,4 +1,4 @@
-name: Java CI Test with Maven
+name: Run Tests with Maven
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
       - name: Integration Test
         run: mvn clean verify
 
-  call-workflow-dockerize:
-    if: contains(github.ref, 'main') || contains(github.ref, 'develop')
+  deploy_to_aws:
+    if: contains(github.ref, 'main')
     needs: run_tests
-    uses: ./.github/workflows/ci-dockerize.yml
+    uses: ./.github/workflows/build-push-to-amazon-ecr.yml
