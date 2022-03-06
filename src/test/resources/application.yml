@@ -1,0 +1,23 @@
+constants:
+  jwt:
+    issuer: Forest
+    expireSec: 20
+    clockSkewSec: 0
+    secretKey: test-key
+  tmdb:
+    baseUrl: http://localhost:9999
+    tmdbKey: test-key
+    searchMovieAPI: /search/movie
+    searchMovieByIdAPI: /movie
+spring:
+  jpa:
+    hibernate:
+      show-sql: true
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+  datasource:
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: password
+  liquibase:
+    change-log: classpath:db/liquibase-changelog.yml

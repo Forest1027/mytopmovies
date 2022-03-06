@@ -32,6 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 /HELP.md
-/mvnw
-/mvnw.cmd
-/.mvn/
+/src/main/resources/secrets.txt
+/log/
+/db.mv.db
+/db.trace.db
+/fetchGenres.js
+/postgres-data/
