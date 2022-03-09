@@ -23,4 +23,9 @@ public class GenreServiceImpl implements GenreService {
     public List<Genre> saveAllGenres(List<Genre> genres) {
         return repository.saveAllAndFlush(genres);
     }
+
+    @Override
+    public Genre saveGenre(Genre genre) {
+        return repository.saveAndFlush(genre);
+    }
 }

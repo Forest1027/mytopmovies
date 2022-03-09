@@ -41,7 +41,11 @@ public class PojoEntityParamDtoConverter {
     public static Movie convertMovieDtoToEntity(MovieDto movieDto, GenreService genreService) {
         List<Genre> genres;
         if (movieDto.getGenres() != null && !movieDto.getGenres().isEmpty()) {
-            genres = genreService.saveAllGenres(movieDto.getGenres().stream().map(PojoEntityParamDtoConverter::convertGenreDtoToEntity).toList());
+            genres = movieDto.getGenres().stream()
+                    .map(genreDto -> genreService
+                            .findGenreByTMDBId(genreDto.getId())
+                            .orElseGet(() -> genreService.saveGenre(convertGenreDtoToEntity(genreDto))))
+                    .collect(Collectors.toList());
         } else {
             genres = getGenreList(movieDto.getGenre_ids(), genreService);
         }
@@ -72,8 +76,7 @@ public class PojoEntityParamDtoConverter {
                 .id(movieList.getId())
                 .movieListName(movieList.getMovieListName())
                 .description(movieList.getDescription())
-                .movies(Optional.ofNullable(movieList.getMovies())
-                        .map(Collection::stream).orElse(Stream.empty())
+                .movies(Optional.ofNullable(movieList.getMovies()).stream().flatMap(Collection::stream)
                         .sorted(Comparator.comparingInt(Movie::getTmdbId)).map(PojoEntityParamDtoConverter::convertMovieEntityToPojo).toList())
                 .build();
     }
@@ -82,8 +85,7 @@ public class PojoEntityParamDtoConverter {
         return MoviePojo.builder()
                 .tmdbId(movie.getTmdbId())
                 .averageVote(movie.getAverageVote())
-                .genres(Optional.ofNullable(movie.getGenres())
-                        .map(Collection::stream).orElse(Stream.empty())
+                .genres(Optional.ofNullable(movie.getGenres()).stream().flatMap(Collection::stream)
                         .map(PojoEntityParamDtoConverter::convertGenreEntityToPojo).toList())
                 .originalTitle(movie.getOriginalTitle())
                 .originalLanguage(movie.getOriginalLanguage())
