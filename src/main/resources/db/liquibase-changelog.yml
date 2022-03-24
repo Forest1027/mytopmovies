@@ -311,3 +311,11 @@ databaseChangeLog:
             separator: ","
             tableName: MTM_GENRES
             usePreparedStatements: true
+  - changeSet:
+      id: 1642579100999-24
+      author: forest
+      changes:
+        - addUniqueConstraint:
+            columnNames: TMDB_ID
+            constraintName: UK_A1GB3G24PD7HGLHRATW1LY8UM
+            tableName: MTM_GENRES
