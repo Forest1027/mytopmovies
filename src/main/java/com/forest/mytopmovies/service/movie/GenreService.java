@@ -11,4 +11,6 @@ public interface GenreService {
 
     List<Genre> saveAllGenres(List<Genre> genres);
 
+    Genre saveGenre(Genre genre);
+
 }
