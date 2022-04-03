@@ -39,7 +39,7 @@ public class SearchController {
 
     @GetMapping("/movielists")
     @Operation(security = {@SecurityRequirement(name = "Authorization-Token")})
-    public ResponseEntity<PagePojo<MovieListPojo>> getMovieList(@RequestParam String query, @RequestParam(required = false) Integer page, Authentication authentication) {
+    public ResponseEntity<PagePojo<MovieListPojo>> getMovieList(@RequestParam String query, @RequestParam(required = false) @Valid @Range(min = 1) Integer page, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(movieListService.getMovieLists(query, page, user), HttpStatus.OK);
     }

@@ -53,7 +53,7 @@ class MovieListRepositoryIT extends IntegrationTest {
         // given
 
         // when
-        Page<MovieList> result = underTest.findAllByUserIdAndMovieListName(userId, "test1", Pageable.ofSize(5).withPage(0));
+        Page<MovieList> result = underTest.findAllByUserIdAndMovieListNameIgnoreCase(userId, "test1", Pageable.ofSize(5).withPage(0));
 
         // then
         assertThat(result.getNumberOfElements()).isEqualTo(1);

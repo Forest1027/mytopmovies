@@ -21,4 +21,5 @@ public interface MovieListService {
 
     MovieListPojo getMovieListsByUserAndId(int id, User user);
 
+    PagePojo<MovieListPojo> getAllMovieListsByUser(User user, Integer page);
 }
