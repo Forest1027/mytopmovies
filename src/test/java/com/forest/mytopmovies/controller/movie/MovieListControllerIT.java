@@ -1,11 +1,13 @@
 package com.forest.mytopmovies.controller.movie;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forest.mytopmovies.datamodels.entity.User;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListMovieUpdateParam;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListParam;
 import com.forest.mytopmovies.datamodels.params.movie.MovieListUpdateParam;
 import com.forest.mytopmovies.datamodels.pojos.MovieListPojo;
+import com.forest.mytopmovies.datamodels.pojos.PagePojo;
 import com.forest.utils.FileReaderUtil;
 import com.forest.utils.IntegrationTest;
 import com.xebialabs.restito.semantics.Condition;
@@ -319,6 +321,38 @@ class MovieListControllerIT extends IntegrationTest {
         }, 25, TimeUnit.SECONDS);
         executorService.shutdown();
         executorService.awaitTermination(26, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @Order(9)
+    void canGetAllMovieLists() throws Exception {
+        // given
+        ObjectMapper mapper = new ObjectMapper();
+        String token = registerUser(mapper, "forest999", "123456");
+
+        String movieListName = "test1";
+        String description = "test-description";
+        Integer[] movieIds = {550};
+
+        String expectedTMDBResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/searchMovieById.json");
+
+        whenHttp(server)
+                .match(Condition.endsWithUri("/movie/550"), Condition.parameter("api_key", "test-key"))
+                .then(ok(), stringContent(expectedTMDBResponse));
+
+        createMovieList(mapper, movieListName, description, movieIds, token);
+
+        // when
+        MvcResult response = this.mockMvc.perform(get("/api/v1/movielist")
+                        .header("Authorization", String.format("Bearer %s", token)))
+                .andDo(print())
+                .andExpect(status().isOk()).andReturn();
+        PagePojo<MovieListPojo> pojoRes = mapper.readValue(response.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+
+        // then
+        assertThat(pojoRes.getResults().get(0).getMovieListName()).isEqualTo(movieListName);
+        assertThat(pojoRes.getResults().get(0).getDescription()).isEqualTo(description);
     }
 
     private void assertRequestWithExpiredToken(MovieListPojo movieListPojo, String token) throws Exception {

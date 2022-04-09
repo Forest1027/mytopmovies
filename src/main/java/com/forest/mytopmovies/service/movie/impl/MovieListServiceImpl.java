@@ -80,7 +80,7 @@ public class MovieListServiceImpl implements MovieListService {
     public PagePojo<MovieListPojo> getMovieLists(String name, Integer page, User user) {
         if (page == null) page = 1;
         Pageable pageable = Pageable.ofSize(5).withPage(page - 1);
-        Page<MovieList> queryRes = movieListRepository.findAllByUserIdAndMovieListName(user.getId(), name, pageable);
+        Page<MovieList> queryRes = movieListRepository.findAllByUserIdAndMovieListNameIgnoreCase(user.getId(), name, pageable);
         return PagePojo.<MovieListPojo>builder()
                 .totalPages(queryRes.getTotalPages())
                 .totalResults(queryRes.getNumberOfElements())
@@ -107,6 +107,21 @@ public class MovieListServiceImpl implements MovieListService {
         return movieListRepository.findByUserIdAndId(user.getId(), id)
                 .map(PojoEntityParamDtoConverter::convertMovieListEntityToPojo)
                 .orElseThrow(() -> new MovieListNotFoundException(id));
+    }
+
+    @Override
+    public PagePojo<MovieListPojo> getAllMovieListsByUser(User user, Integer page) {
+        if (page == null) page = 1;
+        Pageable pageable = Pageable.ofSize(5).withPage(page - 1);
+        Page<MovieList> queryRes = movieListRepository.findAllByUserId(user.getId(), pageable);
+        return PagePojo.<MovieListPojo>builder()
+                .totalPages(queryRes.getTotalPages())
+                .totalResults(queryRes.getNumberOfElements())
+                .page(page)
+                .results(queryRes.getContent().stream()
+                        .map(PojoEntityParamDtoConverter::convertMovieListEntityToPojo)
+                        .toList())
+                .build();
     }
 
 

@@ -11,7 +11,7 @@ public interface MovieListRepository extends JpaRepository<MovieList, Integer> {
 
     Page<MovieList> findAllByUserId(String userId, Pageable pageable);
 
-    Page<MovieList> findAllByUserIdAndMovieListName(String userId, String movieListName, Pageable pageable);
+    Page<MovieList> findAllByUserIdAndMovieListNameIgnoreCase(String userId, String movieListName, Pageable pageable);
 
     Optional<MovieList> findByUserIdAndId(String userId, int id);
 
