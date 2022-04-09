@@ -13,6 +13,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.function.Supplier;
 
 public class HttpUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtil.class);
@@ -26,8 +27,16 @@ public class HttpUtil {
         return bodySpec.exchangeToMono(clientResponse -> {
             if (clientResponse.statusCode().equals(HttpStatus.OK)) {
                 return clientResponse.bodyToMono(String.class);
-            } else {
-                return clientResponse.createException().flatMap(error -> Mono.error(() -> new TMDBHttpRequestException(error.getMessage())));
+            } else if(clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)){
+                return clientResponse.createException().flatMap(error -> Mono.error(() -> {
+                    LOGGER.error(error.getMessage());
+                    return new TMDBHttpRequestException("Movie is not found. Please double check with search api \"/api/v1/search/movies\"");
+                }));
+            }else {
+                return clientResponse.createException().flatMap(error -> Mono.error(() -> {
+                    LOGGER.error(error.getMessage());
+                    return new TMDBHttpRequestException("Failure when execute request to TMDB API");
+                }));
             }
         }).block();
     }
@@ -61,6 +70,13 @@ public class HttpUtil {
         return ExchangeFilterFunction.ofResponseProcessor(clientResponse -> {
             LOGGER.debug("Response Status Code: {}", clientResponse.statusCode());
             return Mono.just(clientResponse);
+        });
+    }
+
+    static Mono<Object> notFoundErrorSupplier(Exception error) {
+        return Mono.error(() -> {
+            LOGGER.error(error.getMessage());
+            return new TMDBHttpRequestException("Failure when execute request to TMDB API");
         });
     }
 
