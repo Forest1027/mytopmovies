@@ -13,7 +13,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.function.Supplier;
 
 public class HttpUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtil.class);
@@ -27,16 +26,10 @@ public class HttpUtil {
         return bodySpec.exchangeToMono(clientResponse -> {
             if (clientResponse.statusCode().equals(HttpStatus.OK)) {
                 return clientResponse.bodyToMono(String.class);
-            } else if(clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)){
-                return clientResponse.createException().flatMap(error -> Mono.error(() -> {
-                    LOGGER.error(error.getMessage());
-                    return new TMDBHttpRequestException("Movie is not found. Please double check with search api \"/api/v1/search/movies\"");
-                }));
-            }else {
-                return clientResponse.createException().flatMap(error -> Mono.error(() -> {
-                    LOGGER.error(error.getMessage());
-                    return new TMDBHttpRequestException("Failure when execute request to TMDB API");
-                }));
+            } else if (clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)) {
+                return clientResponse.createException().flatMap(error -> errorMono(error, "Movie is not found. Please double check with search api \"/api/v1/search/movies\""));
+            } else {
+                return clientResponse.createException().flatMap(error -> errorMono(error, "Failure when execute request to TMDB API"));
             }
         }).block();
     }
@@ -73,10 +66,10 @@ public class HttpUtil {
         });
     }
 
-    static Mono<Object> notFoundErrorSupplier(Exception error) {
+    static Mono<String> errorMono(Exception error, String msg) {
         return Mono.error(() -> {
             LOGGER.error(error.getMessage());
-            return new TMDBHttpRequestException("Failure when execute request to TMDB API");
+            return new TMDBHttpRequestException(msg);
         });
     }
 
