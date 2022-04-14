@@ -67,10 +67,7 @@ public class HttpUtil {
     }
 
     static Mono<String> errorMono(Exception error, String msg) {
-        return Mono.error(() -> {
-            LOGGER.error(error.getMessage());
-            return new TMDBHttpRequestException(msg);
-        });
+        LOGGER.error(error.getMessage());
+        return Mono.error(() ->  new TMDBHttpRequestException(msg));
     }
-
 }
