@@ -141,19 +141,36 @@ class MovieListServiceImplUnitTest extends UnitTest {
     }
 
     @Test
-    void canGetMovieLists() {
+    void canGetMovieListsByName() {
         // given
         MovieList mockMovieList = MovieList.builder().movieListName(movieListName).description(description).build();
         Pageable pageable = Pageable.ofSize(5).withPage(0);
         Page<MovieList> mockPage = new PageImpl<>(Collections.singletonList(mockMovieList), pageable, 0);
         User user = User.builder().username("forest").username("123456").id("test").build();
-        when(movieListRepository.findAllByUserIdAndMovieListName(user.getId(), mockMovieList.getMovieListName(), pageable)).thenReturn(mockPage);
+        when(movieListRepository.findAllByUserIdAndMovieListNameIgnoreCase(user.getId(), mockMovieList.getMovieListName(), pageable)).thenReturn(mockPage);
 
         // when
         PagePojo<MovieListPojo> result = underTest.getMovieLists(mockMovieList.getMovieListName(), null, user);
 
         // then
-        verify(movieListRepository).findAllByUserIdAndMovieListName(user.getId(), mockMovieList.getMovieListName(), pageable);
+        verify(movieListRepository).findAllByUserIdAndMovieListNameIgnoreCase(user.getId(), mockMovieList.getMovieListName(), pageable);
+        assertThat(result.getResults().get(0).getMovieListName()).isEqualTo(movieListName);
+    }
+
+    @Test
+    void canGetAllMovieLists() {
+        // given
+        MovieList mockMovieList = MovieList.builder().movieListName(movieListName).description(description).build();
+        Pageable pageable = Pageable.ofSize(5).withPage(0);
+        Page<MovieList> mockPage = new PageImpl<>(Collections.singletonList(mockMovieList), pageable, 0);
+        User user = User.builder().username("forest").username("123456").id("test").build();
+        when(movieListRepository.findAllByUserId(user.getId(), pageable)).thenReturn(mockPage);
+
+        // when
+        PagePojo<MovieListPojo> result = underTest.getAllMovieListsByUser(user, null);
+
+        // then
+        verify(movieListRepository).findAllByUserId(user.getId(), pageable);
         assertThat(result.getResults().get(0).getMovieListName()).isEqualTo(movieListName);
     }
 

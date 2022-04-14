@@ -55,7 +55,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             httpServletResponse.setContentType("application/text");
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            httpServletResponse.getOutputStream().println(e.getMessage());
+            httpServletResponse.getOutputStream().println("JWT has expired. Please login again.");
         }
     }
 

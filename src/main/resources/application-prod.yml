@@ -33,3 +33,5 @@ logging:
   logback:
     rollingpolicy:
       file-name-pattern: log/MTM-%d{dd-MM-yyyy}.%i.log
+product:
+  version: @product.version@

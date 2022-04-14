@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ResponseEntity<String> tmdbExceptionHandler(TMDBHttpRequestException ex) {
         LOGGER.error("TMDB request error: {}", ex.getMessage());
-        return new ResponseEntity<>("Failure when execute request to TMDB API", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
