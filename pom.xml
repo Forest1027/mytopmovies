@@ -27,7 +27,7 @@
     <artifactId>mytopmovies</artifactId>
     <version>${product.version}</version>
     <name>mytopmovies</name>
-    <description>Demo project for Spring Boot</description>
+    <description>MTM Rest API</description>
 
     <dependencies>
         <dependency>
