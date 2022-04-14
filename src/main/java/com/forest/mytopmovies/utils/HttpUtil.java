@@ -26,8 +26,10 @@ public class HttpUtil {
         return bodySpec.exchangeToMono(clientResponse -> {
             if (clientResponse.statusCode().equals(HttpStatus.OK)) {
                 return clientResponse.bodyToMono(String.class);
+            } else if (clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)) {
+                return clientResponse.createException().flatMap(error -> errorMono(error, "Movie is not found. Please double check with search api \"/api/v1/search/movies\""));
             } else {
-                return clientResponse.createException().flatMap(error -> Mono.error(() -> new TMDBHttpRequestException(error.getMessage())));
+                return clientResponse.createException().flatMap(error -> errorMono(error, "Failure when execute request to TMDB API"));
             }
         }).block();
     }
@@ -64,4 +66,8 @@ public class HttpUtil {
         });
     }
 
+    static Mono<String> errorMono(Exception error, String msg) {
+        LOGGER.error(error.getMessage());
+        return Mono.error(() ->  new TMDBHttpRequestException(msg));
+    }
 }

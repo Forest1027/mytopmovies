@@ -30,7 +30,7 @@ class HttpUtilUnitTest extends UnitTest {
     }
 
     @Test
-    void testGETRequestSuccess() throws Exception {
+    void testGETRequestSuccess() {
         // given
         String expectedResponse = "Succeed";
         whenHttp(server)
@@ -52,13 +52,26 @@ class HttpUtilUnitTest extends UnitTest {
                 .then(status(HttpStatus.BAD_REQUEST_400));
 
         // when
-        TMDBHttpRequestException exception = assertThrows(TMDBHttpRequestException.class, () -> {
-            HttpUtil.get("http://localhost:9999", "/search/movie");
-        });
+        TMDBHttpRequestException exception = assertThrows(TMDBHttpRequestException.class, () -> HttpUtil.get("http://localhost:9999", "/search/movie"));
 
 
         // then
-        assertThat(exception.getMessage()).contains("Bad Request");
+        assertThat(exception.getMessage()).contains("Failure when execute request to TMDB API");
+    }
+
+    @Test
+    void testGETRequestNotFoundFail() {
+        // given
+        whenHttp(server)
+                .match("/search/movie")
+                .then(status(HttpStatus.NOT_FOUND_404));
+
+        // when
+        TMDBHttpRequestException exception = assertThrows(TMDBHttpRequestException.class, () -> HttpUtil.get("http://localhost:9999", "/search/movie"));
+
+
+        // then
+        assertThat(exception.getMessage()).contains("not found");
     }
 
 }

@@ -118,11 +118,11 @@ class SearchControllerIT extends IntegrationTest {
     void canThrowTMDBExceptionWhenFailure() throws Exception {
         // given
         String movieName = "Don't look up";
-        String expectedReponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/search.json");
+        String expectedResponse = FileReaderUtil.readJsonFromFile("src/test/java/com/forest/utils/json_response/tmdb/search.json");
         String uri = "/search/movie";
         whenHttp(server)
                 .match(Condition.endsWithUri(uri), Condition.parameter("api_key", "test-wrong-key"))
-                .then(ok(), stringContent(expectedReponse));
+                .then(ok(), stringContent(expectedResponse));
 
         // when
 
@@ -130,7 +130,6 @@ class SearchControllerIT extends IntegrationTest {
         this.mockMvc.perform(get("/api/v1/search/movies?query=" + movieName))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Failure when execute request to TMDB API")))
                 .andReturn();
     }
 

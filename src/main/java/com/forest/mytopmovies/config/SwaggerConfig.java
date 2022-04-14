@@ -14,8 +14,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI(@Value("${product.version}") String appVersion) {
         return new OpenAPI()
-                .components(new Components().addSecuritySchemes("basicScheme",
-                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")))
+                .components(components())
                 .info(new Info().title("MyTopMovies API").version(appVersion)
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")));
     }
