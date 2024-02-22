@@ -3,7 +3,7 @@ MyTopMovie project(MTM) provides REST API for managing your own movie lists. It'
 
 This documentation is meant to provide guidance for running the project and tests in your local. I strongly recommend you to visit https://forestruan.notion.site/MTM-Design-Documentation-85a997e6f47b415a95c5d14d8515bfbc for the detailed design documentation including architecture and tech specs of this project.
 
-To access the live version of this project, please visit http://mtm-3a4d1d4b1bb5e20a.elb.eu-west-1.amazonaws.com.
+~~To access the live version of this project, please visit http://mtm-3a4d1d4b1bb5e20a.elb.eu-west-1.amazonaws.com.~~ (Currently stopped hosting live project)
 
 # Run the project in your local
 The H2 database is used for a quick start in local environment. To run the project, please follow the steps below.
